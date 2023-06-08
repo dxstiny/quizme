@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type IMultipleChoiceQuestion } from "../../types";
+import { type IMultipleChoiceQuestion } from "../../quiz";
 import { type PropType, ref, watch } from "vue";
 
 const props = defineProps({

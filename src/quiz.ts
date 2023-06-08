@@ -1,5 +1,5 @@
 interface IQuestion {
-    id: number;
+    id: string;
     points?: number;
     title?: string;
     question: string;
@@ -80,8 +80,15 @@ export type Question =
     | IOrderingQuestion;
 
 export interface IQuiz {
-    id: number;
+    id: string;
     title: string;
     description: string;
     questions: Question[];
+}
+
+export interface IRun {
+    correct: string[];
+    wrong: string[];
+    startTime: Date;
+    endTime: Date | null;
 }

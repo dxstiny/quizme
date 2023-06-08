@@ -23,3 +23,24 @@ h3 {
 .material-symbols-outlined {
     font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
 }
+
+.flex {
+    display: flex;
+    align-items: center;
+
+    &.gap-2 {
+        gap: 0.5em;
+    }
+
+    &.gap-4 {
+        gap: 1em;
+    }
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.muted {
+    color: var(--fg-base-mute);
+}

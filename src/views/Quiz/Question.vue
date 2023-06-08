@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Question } from "../../types";
+import { type Question } from "../../quiz";
 import { type PropType } from "vue";
 
 import MultipleChoice from "@/components/questions/MultipleChoice.vue";

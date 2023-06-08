@@ -1,70 +1,24 @@
 <script lang="ts" setup>
-import { type IQuiz } from "../../types";
 import { computed, ref } from "vue";
 import Question from "./Question.vue";
 import IconButton from "@/components/IconButton.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
+import { useCourseStore } from "@/stores/course";
+import { type IRun } from "@/quiz";
+
+const route = useRoute();
+const courses = useCourseStore();
+
+const run = ref({
+    correct: [],
+    wrong: [],
+    startTime: new Date(),
+    endTime: null
+} as IRun);
+
+const quiz = ref(courses.getQuiz(route.params.id as string));
 
 const router = useRouter();
-
-const quiz = ref({
-    id: 1,
-    title: "CPU Quiz",
-    description: "This is a quiz",
-    questions: [
-        {
-            id: 1,
-            points: 1,
-            type: "multiple-choice",
-            title: "CPU: Befehlsausführung",
-            question:
-                "Was ist die richtige Durchführungsreihenfolge in der CPU?",
-            hint: 'Die Notation "PC++" bedeutet, das der Programcounter (PC) inkrementiert wird.',
-            options: [
-                "PC++/ execute / fetch / decode",
-                "PC++/ decode / execute / fetch",
-                "fetch / PC++/ decode / execute",
-                "PC++ / fetch / decode /execute",
-                "decode / fetch / execute / PC++"
-            ],
-            solution: 2
-        },
-        {
-            id: 1,
-            points: 1,
-            type: "multiple-choice",
-            title: "CPU: Befehlsausführung",
-            question:
-                "Was ist die richtige Durchführungsreihenfolge in der CPU?",
-            options: [
-                "PC++/ execute / fetch / decode",
-                "PC++/ decode / execute / fetch",
-                "fetch / PC++/ decode / execute",
-                "PC++ / fetch / decode /execute",
-                "decode / fetch / execute / PC++"
-            ],
-            solution: 2
-        },
-        {
-            id: 1,
-            points: 1,
-            type: "multiple-choice",
-            title: "CPU: Befehlsausführung",
-            question:
-                "Was ist die richtige Durchführungsreihenfolge in der CPU?",
-            hint: 'Die Notation "PC++" bedeutet, das der Programcounter (PC) inkrementiert wird.',
-            options: [
-                "PC++/ execute / fetch / decode",
-                "PC++/ decode / execute / fetch",
-                "fetch / PC++/ decode / execute",
-                "PC++ / fetch / decode /execute",
-                "decode / fetch / execute / PC++"
-            ],
-            solution: 2
-        }
-    ]
-} as IQuiz);
-
 const currentQuestion = ref(0);
 
 const answered = computed(() => {
@@ -78,7 +32,6 @@ const showTip = () => {
 };
 const checking = ref(false);
 const correct = computed(() => {
-    // TODO support other types
     return (
         quiz.value.questions[currentQuestion.value].answer === solution.value
     );
@@ -96,10 +49,77 @@ const solutionText = computed(() => {
 const next = () => {
     checking.value = false;
     currentQuestion.value++;
+    onEnd();
 };
-
 const showEnd = computed(() => {
     return currentQuestion.value === quiz.value.questions.length;
+});
+const onEnd = () => {
+    console.log("onEnd");
+
+    if (!showEnd.value) return;
+    run.value.endTime = new Date();
+
+    console.log(run.value);
+};
+
+const quit = () => {
+    if (currentQuestion.value === 0) {
+        router.push("/");
+        return;
+    }
+
+    if (confirm("Are you sure you want to quit?")) {
+        router.push("/");
+    }
+};
+
+const check = () => {
+    checking.value = true;
+    const thisId = quiz.value.questions[currentQuestion.value].id;
+
+    if (correct.value) {
+        run.value.correct.push(thisId);
+        return;
+    }
+
+    run.value.wrong.push(thisId);
+
+    if (quiz.value.questions.filter((q) => q.id === thisId).length === 1) {
+        quiz.value.questions.push(quiz.value.questions[currentQuestion.value]);
+        // remove answer
+        delete quiz.value.questions[quiz.value.questions.length - 1].answer;
+    }
+};
+
+const formattedRunTime = computed(() => {
+    if (run.value.endTime == null) return 0;
+    /*
+    m:ss
+    */
+    const diff = run.value.endTime.getTime() - run.value.startTime.getTime();
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const ss = (seconds - minutes * 60).toString().padStart(2, "0");
+
+    return `${minutes}:${ss}`;
+});
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        if (showEnd.value) {
+            router.push("/");
+            return;
+        }
+
+        if (checking.value) {
+            next();
+            return;
+        }
+
+        if (!answered.value) return;
+        check();
+    }
 });
 </script>
 <template>
@@ -107,10 +127,17 @@ const showEnd = computed(() => {
         <template v-if="!showEnd">
             <div class="header">
                 <h1>{{ quiz.title }}</h1>
-                <progress
-                    :max="quiz.questions.length"
-                    :value="currentQuestion + (checking ? 1 : 0)"
-                />
+                <div class="flex gap-2">
+                    <span
+                        @click="quit"
+                        class="material-symbols-rounded muted cursor-pointer"
+                        >close</span
+                    >
+                    <progress
+                        :max="quiz.questions.length"
+                        :value="currentQuestion + (checking ? 1 : 0)"
+                    />
+                </div>
             </div>
             <div class="body">
                 <Question
@@ -126,12 +153,20 @@ const showEnd = computed(() => {
             <h1>Well done!</h1>
             <div class="review">
                 <div class="score">
-                    <span>Score</span>
-                    <span class="value">100%</span>
+                    <span>SCORE</span>
+                    <span class="value">
+                        {{
+                            Math.round(
+                                (run.correct.length / quiz.questions.length) *
+                                    100
+                            )
+                        }}
+                        %
+                    </span>
                 </div>
                 <div class="time">
-                    <span>time</span>
-                    <span class="value">1 min</span>
+                    <span>TIME</span>
+                    <span class="value">{{ formattedRunTime }}</span>
                 </div>
             </div>
         </div>
@@ -169,7 +204,7 @@ const showEnd = computed(() => {
                     label="Check"
                     type="submit"
                     :disabled="!answered"
-                    @click="checking = true"
+                    @click="check"
                 />
             </div>
             <div
