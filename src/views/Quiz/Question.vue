@@ -12,6 +12,10 @@ defineProps({
     disabled: {
         type: Boolean,
         default: false
+    },
+    editable: {
+        type: Boolean,
+        default: false
     }
 });
 </script>
@@ -20,5 +24,6 @@ defineProps({
         v-if="question.type === 'multiple-choice'"
         :question="question"
         :disabled="disabled"
+        :editable="editable"
     />
 </template>

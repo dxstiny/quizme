@@ -16,5 +16,12 @@ export const generateQuiz = (course: ICourse, length = 15): IQuiz => {
 
     quiz.questions = course.questions.slice(0, length);
 
+    for (const question of quiz.questions) {
+        if (question.answer) {
+            console.warn("Question already has an answer", question);
+        }
+        delete question.answer;
+    }
+
     return JSON.parse(JSON.stringify(quiz));
 };
