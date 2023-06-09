@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import EditableText from "../EditableText.vue";
-import { type IMultipleChoiceQuestion } from "../../quiz";
+import { type IMultipleAnswerQuestion } from "../../quiz";
 import { type PropType, ref, watch } from "vue";
 
 const props = defineProps({
     question: {
-        type: Object as PropType<IMultipleChoiceQuestion>,
+        type: Object as PropType<IMultipleAnswerQuestion>,
         required: true
     },
     disabled: {
@@ -26,14 +26,16 @@ const randomise = () => {
         return;
     }
 
-    const solutionText = props.question.options[props.question.solution];
+    const solutionText = props.question.solution.map(
+        (index) => props.question.options[index]
+    );
 
     randomOptions.value = props.question.options.sort(
         () => Math.random() - 0.5
     );
 
-    props.question.solution = randomOptions.value.findIndex(
-        (option) => option === solutionText
+    props.question.solution = solutionText.map((option) =>
+        randomOptions.value.findIndex((text) => text === option)
     );
     props.question.options = props.question.options;
 };
@@ -44,11 +46,28 @@ const select = (index: number) => {
     if (props.disabled) return;
 
     if (props.editable) {
-        props.question.solution = index;
+        if (props.question.solution.includes(index)) {
+            props.question.solution.splice(
+                props.question.solution.findIndex((i) => i === index),
+                1
+            );
+            return;
+        }
+        props.question.solution.push(index);
         return;
     }
 
-    props.question.answer = index;
+    if (!props.question.answer) props.question.answer = [];
+
+    if (props.question.answer.includes(index)) {
+        props.question.answer.splice(
+            props.question.answer.findIndex((i) => i === index),
+            1
+        );
+        return;
+    }
+
+    props.question.answer.push(index);
 };
 </script>
 <template>
@@ -76,8 +95,9 @@ const select = (index: number) => {
             <div
                 class="option"
                 :class="{
-                    selected: !editable && props.question.answer === index,
-                    correct: editable && props.question.solution === index
+                    selected:
+                        !editable && props.question?.answer?.includes(index),
+                    correct: editable && props.question.solution.includes(index)
                 }"
                 @click="select(index)"
                 v-for="(option, index) in randomOptions"

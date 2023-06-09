@@ -8,7 +8,7 @@ defineProps({
     },
     label: {
         type: String,
-        required: true
+        required: false
     },
     type: {
         type: String as PropType<
@@ -40,7 +40,11 @@ defineProps({
             class="material-symbols-rounded"
             >{{ icon }}</span
         >
-        <span class="label">{{ label }}</span>
+        <span
+            v-if="label"
+            class="label"
+            >{{ label }}</span
+        >
     </button>
 </template>
 <style scoped>

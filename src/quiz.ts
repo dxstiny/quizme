@@ -1,7 +1,6 @@
 interface IQuestion {
     id: string;
-    points?: number;
-    title?: string;
+    title: string;
     question: string;
     hint?: string;
     type:
@@ -13,8 +12,20 @@ interface IQuestion {
         | "fill-in-the-blank"
         | "matching"
         | "ordering";
-    solution: string | number | boolean | string[] | number[];
-    answer?: string | number | boolean | string[] | number[];
+    solution:
+        | string
+        | number
+        | boolean
+        | string[]
+        | number[]
+        | Record<string, string>;
+    answer?:
+        | string
+        | number
+        | boolean
+        | string[]
+        | number[]
+        | Record<string, string>;
 }
 
 export interface IMultipleChoiceQuestion extends IQuestion {
@@ -57,16 +68,14 @@ export interface IFillInTheBlankQuestion extends IQuestion {
 
 export interface IMatchingQuestion extends IQuestion {
     type: "matching";
-    options: string[];
-    solution: number[];
-    answer?: number[];
+    solution: Record<string, string>;
+    answer?: Record<string, string>;
 }
 
 export interface IOrderingQuestion extends IQuestion {
     type: "ordering";
-    options: string[];
-    solution: number[];
-    answer?: number[];
+    solution: string[];
+    answer?: string[];
 }
 
 export type Question =

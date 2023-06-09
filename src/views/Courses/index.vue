@@ -8,7 +8,29 @@ const courses = useCourseStore();
 <template>
     <WithSidebar>
         <div class="dashboard">
-            <h1>Courses</h1>
+            <div class="head">
+                <h1>Courses</h1>
+                <div class="actions">
+                    <IconButton
+                        icon="add"
+                        label="Add"
+                        type="action-green"
+                        @click="
+                            courses.addCourse({
+                                title: '',
+                                description: '',
+                                questions: [],
+                                id: Math.random().toString(36).substring(7)
+                            })
+                        "
+                    />
+                    <IconButton
+                        icon="file_upload"
+                        label="Upload"
+                        @click="courses.addFromUpload"
+                    />
+                </div>
+            </div>
             <div class="courses">
                 <div
                     v-for="course in courses.courses"
@@ -38,6 +60,17 @@ const courses = useCourseStore();
 <style scoped>
 .dashboard {
     padding: 1em;
+}
+
+.head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .actions {
+        display: flex;
+        gap: 1em;
+    }
 }
 
 .courses {

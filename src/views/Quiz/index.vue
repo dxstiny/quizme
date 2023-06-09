@@ -21,7 +21,18 @@ const quiz = ref(courses.getQuiz(route.params.id as string));
 const router = useRouter();
 const currentQuestion = ref(0);
 
+const activeQuestion = computed(() => {
+    return quiz.value.questions[currentQuestion.value];
+});
+
 const answered = computed(() => {
+    const question = activeQuestion.value;
+    if (question.type == "matching") {
+        const answer = question.answer || {};
+        const solution = question.solution || {};
+        return Object.keys(answer).length === Object.keys(solution).length;
+    }
+
     return quiz.value.questions[currentQuestion.value]?.answer != null;
 });
 const hasTip = computed(() => {
@@ -31,19 +42,52 @@ const showTip = () => {
     alert(quiz.value.questions[currentQuestion.value].hint);
 };
 const checking = ref(false);
-const correct = computed(() => {
-    return (
-        quiz.value.questions[currentQuestion.value].answer === solution.value
-    );
-});
+const correct = () => {
+    if (activeQuestion.value.type === "matching") {
+        const solution = activeQuestion.value.solution || {};
+        const answer = activeQuestion.value.answer || {};
+        if (Object.keys(solution).length !== Object.keys(answer).length) {
+            return false;
+        }
+
+        next();
+        return true;
+    }
+
+    if (activeQuestion.value.type == "multiple-answer") {
+        const solution = activeQuestion.value.solution || [];
+        const answer = activeQuestion.value.answer || [];
+        return solution.every((s) => answer.includes(s));
+    }
+
+    if (activeQuestion.value.type == "ordering") {
+        const solution = activeQuestion.value.solution || [];
+        const answer = activeQuestion.value.answer || [];
+        return solution.every((s, i) => s === answer[i]);
+    }
+
+    return activeQuestion.value.answer === solution.value;
+};
 const solution = computed(() => {
-    return quiz.value.questions[currentQuestion.value].solution;
+    return activeQuestion.value.solution;
 });
 const solutionText = computed(() => {
-    const question = quiz.value.questions[currentQuestion.value];
+    const question = activeQuestion.value;
 
     if (question.type === "multiple-choice") {
         return question.options[question.solution];
+    }
+    if (question.type === "multiple-answer") {
+        return question.solution.map((s) => question.options[s]).join(", ");
+    }
+    if (question.type === "true-false") {
+        return question.solution ? "True" : "False";
+    }
+    if (["text-answer", "number-answer"].includes(question.type)) {
+        return question.solution;
+    }
+    if (question.type === "ordering") {
+        return question.solution.join(", ");
     }
 });
 const next = () => {
@@ -55,12 +99,8 @@ const showEnd = computed(() => {
     return currentQuestion.value === quiz.value.questions.length;
 });
 const onEnd = () => {
-    console.log("onEnd");
-
     if (!showEnd.value) return;
     run.value.endTime = new Date();
-
-    console.log(run.value);
 };
 
 const quit = () => {
@@ -76,9 +116,9 @@ const quit = () => {
 
 const check = () => {
     checking.value = true;
-    const thisId = quiz.value.questions[currentQuestion.value].id;
+    const thisId = activeQuestion.value.id;
 
-    if (correct.value) {
+    if (correct()) {
         run.value.correct.push(thisId);
         return;
     }
@@ -86,7 +126,7 @@ const check = () => {
     run.value.wrong.push(thisId);
 
     if (quiz.value.questions.filter((q) => q.id === thisId).length === 1) {
-        quiz.value.questions.push(quiz.value.questions[currentQuestion.value]);
+        quiz.value.questions.push(activeQuestion.value);
         // remove answer
         delete quiz.value.questions[quiz.value.questions.length - 1].answer;
     }
@@ -213,7 +253,7 @@ document.addEventListener("keydown", (e) => {
             >
                 <div
                     class="correct"
-                    v-if="correct"
+                    v-if="correct()"
                 >
                     <div class="continue">
                         <div class="icon">
@@ -336,16 +376,24 @@ document.addEventListener("keydown", (e) => {
     }
 
     & > div {
-        width: 100%;
+        padding: 0 1em;
+        width: calc(100% - 2em);
 
         @media screen and (min-width: 1080px) {
             max-width: 1080px;
+            padding: 0;
         }
     }
 
     .footer {
         max-width: none;
         padding: 1em 0;
+        width: 100%;
+
+        .checking,
+        .check {
+            padding: 0 1em;
+        }
 
         & > div {
             @media screen and (min-width: 1080px) {

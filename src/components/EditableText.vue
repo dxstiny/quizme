@@ -39,6 +39,7 @@ const startEditing = () => {
 <template>
     <div
         class="editable-text"
+        :class="{ outlined: !noOutline && editing }"
         @dblclick="startEditing"
     >
         <slot v-if="!editing" />
@@ -46,7 +47,6 @@ const startEditing = () => {
             v-else
             ref="area"
             v-model="value"
-            :class="{ outlined: !noOutline }"
             @input="
                 emit(
                     'update:modelValue',
@@ -56,13 +56,21 @@ const startEditing = () => {
             @keydown.enter="editing = false"
             @keydown.esc="editing = false"
             @blur="editing = false"
-            @focusout="editing = false"
         />
     </div>
 </template>
 <style scoped>
+.editable-text {
+    &.outlined {
+        border: 2px solid var(--bg-base-lt);
+        border-radius: 0.5em;
+        margin-bottom: 1em;
+    }
+}
+
 textarea {
     width: 100%;
+    height: 100%;
     border: none;
     background: none;
     font-size: 1em;
@@ -71,15 +79,14 @@ textarea {
     color: inherit;
     outline: none;
     color: var(--fg-base);
+    resize: none;
+    margin: 0;
+}
 
-    &.title {
-        font-size: 2rem;
-        font-weight: 900;
-    }
-
-    &.outlined {
-        border: 2px solid var(--bg-base-lt);
-        border-radius: 0.5em;
-    }
+.h1 textarea {
+    font-size: 2rem;
+    font-weight: 900;
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
 }
 </style>
