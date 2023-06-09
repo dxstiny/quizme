@@ -78,6 +78,41 @@ export interface IOrderingQuestion extends IQuestion {
     answer?: string[];
 }
 
+export const TYPE_OPTIONS = [
+    {
+        label: "Multiple Choice",
+        value: "multiple-choice"
+    },
+    {
+        label: "Multiple Answer",
+        value: "multiple-answer"
+    },
+    {
+        label: "Text Answer",
+        value: "text-answer"
+    },
+    {
+        label: "Number Answer",
+        value: "number-answer"
+    },
+    {
+        label: "True/False",
+        value: "true-false"
+    },
+    {
+        label: "Fill in the Blank",
+        value: "fill-in-the-blank"
+    },
+    {
+        label: "Matching",
+        value: "matching"
+    },
+    {
+        label: "Ordering",
+        value: "ordering"
+    }
+];
+
 export type Question =
     | IMultipleChoiceQuestion
     | IMultipleAnswerQuestion

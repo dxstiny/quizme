@@ -48,7 +48,7 @@ defineProps({
     </button>
 </template>
 <style scoped>
-.material-symbols-rounded {
+.material-symbols-rounded:not(:last-child) {
     margin-right: 0.5em;
 }
 
@@ -59,8 +59,6 @@ defineProps({
     --border-hover: var(--c-blue-light);
     --text-hover: white;
     --back-hover: var(--c-blue-light);
-
-    min-width: 150px;
 
     padding: 0.5em;
     border: 2px solid var(--border);

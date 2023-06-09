@@ -21,20 +21,17 @@ import NavLink from "@/components/NavLink.vue";
                 label="Courses"
             />
             <NavLink
-                to="/editor"
-                icon="add"
-                label="Create"
-            />
-            <NavLink
                 to="/about"
                 icon="question_mark"
                 label="About"
             />
         </div>
-        <slot />
+        <div class="slot">
+            <slot />
+        </div>
     </div>
 </template>
-<style scoped>
+<style>
 .wrapper {
     height: 100svh;
     width: 100%;
@@ -52,6 +49,38 @@ import NavLink from "@/components/NavLink.vue";
         gap: 0.5em;
         padding: 1em;
         border-right: 2px solid var(--bg-base-lt);
+    }
+
+    .slot {
+        max-height: 100vh;
+        overflow-y: auto;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .wrapper {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 88px;
+        font-size: 1.5em;
+
+        .sidebar {
+            grid-row: 2;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            border-right: none;
+            border-top: 2px solid var(--bg-base-lt);
+            border-right: none;
+            padding: 0 1em;
+
+            .logo {
+                display: none;
+            }
+
+            .material-symbols-rounded {
+                font-size: 36px;
+            }
+        }
     }
 }
 </style>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref, watch } from "vue";
+import { nextTick, ref, watch, computed } from "vue";
 
 const props = defineProps({
     modelValue: {
@@ -35,6 +35,12 @@ const startEditing = () => {
         area.value.focus();
     });
 };
+
+const showSlot = computed(() => {
+    if (props.locked) return true;
+    if (editing.value) return false;
+    return value.value;
+});
 </script>
 <template>
     <div
@@ -42,7 +48,7 @@ const startEditing = () => {
         :class="{ outlined: !noOutline && editing }"
         @dblclick="startEditing"
     >
-        <slot v-if="!editing" />
+        <slot v-if="showSlot" />
         <textarea
             v-else
             ref="area"
@@ -53,9 +59,11 @@ const startEditing = () => {
                     ($event.target as HTMLTextAreaElement).value
                 )
             "
+            @click="editing = true"
             @keydown.enter="editing = false"
             @keydown.esc="editing = false"
             @blur="editing = false"
+            placeholder="Click to edit"
         />
     </div>
 </template>
@@ -81,6 +89,12 @@ textarea {
     color: var(--fg-base);
     resize: none;
     margin: 0;
+
+    &::placeholder {
+        color: var(--fg-base-mute);
+        font-weight: 400;
+        font-style: italic;
+    }
 }
 
 .h1 textarea {

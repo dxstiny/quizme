@@ -1,6 +1,7 @@
 import { ref, watch } from "vue";
 import { defineStore } from "pinia";
 import { generateQuiz, type ICourse } from "@/course";
+import type { Question } from "@/quiz";
 
 const STORAGE_KEY = "quizme.courses";
 
@@ -83,6 +84,24 @@ export const useCourseStore = defineStore("course", () => {
         addCourse(course);
     };
 
+    const moveQuestionUp = (course: ICourse, question: Question) => {
+        const index = course.questions.findIndex((q) => q.id === question.id);
+        if (index === 0) {
+            return;
+        }
+        course.questions.splice(index, 1);
+        course.questions.splice(index - 1, 0, question);
+    };
+
+    const moveQuestionDown = (course: ICourse, question: Question) => {
+        const index = course.questions.findIndex((q) => q.id === question.id);
+        if (index === course.questions.length - 1) {
+            return;
+        }
+        course.questions.splice(index, 1);
+        course.questions.splice(index + 1, 0, question);
+    };
+
     return {
         courses,
         addCourse,
@@ -90,6 +109,8 @@ export const useCourseStore = defineStore("course", () => {
         removeCourse,
         getQuiz,
         downloadCourse,
-        addFromUpload
+        addFromUpload,
+        moveQuestionUp,
+        moveQuestionDown
     };
 });
