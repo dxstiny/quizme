@@ -58,6 +58,7 @@ document.getElementById("action").addEventListener("click", () => {
                 return {
                     title,
                     question: questionText,
+                    id: Math.random().toString(36).substring(7),
                     ...parsed
                 };
             };

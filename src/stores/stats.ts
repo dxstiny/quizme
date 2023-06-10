@@ -25,13 +25,11 @@ export const useStatsStore = defineStore("stats", () => {
         }
 
         stats.value = {
-            start: JSON.stringify(new Date()),
+            start: new Date().toISOString(),
             streaks: [],
             runs: []
         };
     };
-
-    resetStats();
 
     watch(
         stats,
@@ -42,6 +40,8 @@ export const useStatsStore = defineStore("stats", () => {
             deep: true
         }
     );
+
+    resetStats();
 
     const timeSpent = computed(() => {
         return stats.value.runs.reduce((acc, run) => {
@@ -95,6 +95,9 @@ export const useStatsStore = defineStore("stats", () => {
     };
 
     const bestStreak = computed(() => {
+        if (stats.value.streaks.length === 0) {
+            return 0;
+        }
         return Math.max(...stats.value.streaks);
     });
 
