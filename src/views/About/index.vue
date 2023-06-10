@@ -127,6 +127,7 @@ import WithSidebar from "../WithSidebar.vue";
         display: flex;
         flex-direction: row;
         justify-content: end;
+        text-align: right;
 
         & div {
             min-width: 30ch;

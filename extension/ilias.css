@@ -1,0 +1,25 @@
+body {
+    width: 200px;
+    height: 200px;
+
+    font-family: "Quicksand", sans-serif;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+button {
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 0.5em;
+    border: 2px solid #ccc;
+    border-radius: 0.5em;
+    background: none;
+    cursor: pointer;
+
+    &:hover {
+        background: #ccc;
+    }
+}

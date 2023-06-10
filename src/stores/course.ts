@@ -102,6 +102,24 @@ export const useCourseStore = defineStore("course", () => {
         course.questions.splice(index + 1, 0, question);
     };
 
+    window.addQuestions = (courseId: string, questions: Question[]) => {
+        const course = getCourse(courseId);
+        if (!course) {
+            throw new Error(`Course ${courseId} not found`);
+        }
+        course.questions.push(...questions);
+    };
+
+    window.addEventListener("courses.get", () => {
+        console.log("courses.get");
+        let thisCourses = courses.value.map((course) => ({
+            id: course.id,
+            title: course.title
+        }));
+        console.log(thisCourses);
+        return thisCourses;
+    });
+
     return {
         courses,
         addCourse,
