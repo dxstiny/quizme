@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import EditableText from "../EditableText.vue";
 import { type IMatchingQuestion } from "../../quiz";
-import { type PropType, ref, watch, nextTick } from "vue";
+import { type PropType, ref, watch, computed } from "vue";
 
 const props = defineProps({
     question: {
@@ -37,7 +37,70 @@ const randomise = () => {
     randomOptions.value.right = rightSide.sort(() => Math.random() - 0.5);
 };
 randomise();
-watch(() => props.question.solution, randomise);
+watch(() => props.question.solution, randomise, { deep: true });
+const computedRandomOptions = computed(() =>
+    JSON.parse(JSON.stringify(randomOptions.value))
+);
+const renameObjKey = (oldObj: any, oldKey: string, newKey: string) => {
+    const keys = Object.keys(oldObj);
+    const newObj = keys.reduce((acc: any, val) => {
+        if (val === oldKey) {
+            acc[newKey] = oldObj[oldKey];
+        } else {
+            acc[val] = oldObj[val];
+        }
+        return acc;
+    }, {});
+
+    return newObj;
+};
+
+watch(
+    computedRandomOptions,
+    (to, from) => {
+        if (!props.editable) return;
+        // lengths are different
+        if (to.left.length !== from.left.length) return;
+
+        // solution stores as { left: right }
+        // find the index in from
+        // if the value is not in to, then it has changed
+
+        // newLeft: elements that are in to but not in from
+        const newLeft = to.left.filter((l: string) => !from.left.includes(l));
+        // oldLeft: elements that are in from but not in to
+        const oldLeft = from.left.filter((l: string) => !to.left.includes(l));
+
+        // length should be 0
+        if (newLeft.length !== 1 || oldLeft.length !== 1) {
+            // value changed
+            // replace the old right value with the new right value
+            const newRightValue = to.right.find(
+                (r: string) => r !== from.right[0]
+            );
+            // find the index of the newRightValue
+            const newRightIndex = to.right.findIndex(
+                (r: string) => r === newRightValue
+            );
+            const key = to.left[newRightIndex];
+            if (!key) return;
+
+            props.question.solution[key] = newRightValue;
+            return;
+        }
+
+        const oldKey = oldLeft[0];
+        const newKey = newLeft[0];
+
+        // replace the old right value with the new right value
+        props.question.solution = renameObjKey(
+            props.question.solution,
+            oldKey,
+            newKey
+        );
+    },
+    { deep: true }
+);
 
 const selected = ref({
     left: null as null | number,
@@ -117,19 +180,26 @@ const select = (index: number, side: "left" | "right") => {
         <div class="optionlist">
             <div
                 class="options"
-                v-for="side in Object.keys(randomOptions)"
+                v-for="(option, index) in randomOptions.left"
             >
                 <div
                     class="option"
-                    v-for="(option, index) in (randomOptions as any)[side]"
+                    v-for="side in ['left', 'right']"
                     :class="{
                         // @ts-ignore
                         selected: !editable && selected[side] === index,
                         correct:
+                        !editable &&
                             // @ts-ignore
-                            !editable && correctPairs[side].includes(option),
-                        // @ts-ignore
-                        wrong: !editable && wrongPairs[side].includes(option)
+                            correctPairs[side].includes(
+                                (randomOptions as any)[side][index]
+                            ),
+                        wrong:
+                            !editable &&
+                            // @ts-ignore
+                            wrongPairs[side].includes(
+                                (randomOptions as any)[side][index]
+                            )
                     }"
                     @click="select(index, side as any)"
                 >
@@ -141,9 +211,16 @@ const select = (index: number, side: "left" | "right") => {
                             randomOptions[side][index]
                         "
                     >
-                        <span>{{ option }}</span>
+                        <span>{{ (randomOptions as any)[side][index] }}</span>
                     </EditableText>
                 </div>
+                <span
+                    v-if="editable"
+                    class="material-symbols-rounded delete"
+                    @click.stop="delete props.question.solution[option]"
+                >
+                    delete
+                </span>
             </div>
             <div
                 v-if="editable"
@@ -197,12 +274,26 @@ const select = (index: number, side: "left" | "right") => {
 }
 
 .optionlist {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 1em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
 
     .option.add {
         grid-column: 1 / span 2;
+    }
+
+    .options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+
+        &:has(.delete) {
+            grid-template-columns: 1fr 1fr max-content;
+        }
+
+        .delete {
+            cursor: pointer;
+        }
     }
 
     .option {

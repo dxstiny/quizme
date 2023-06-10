@@ -184,9 +184,9 @@ const changeQuestionType = (question: IQuestion, to: string) => {
     align-items: center;
 
     .editor {
-        width: 100%;
         max-width: 1080px;
-        margin: 1em;
+        padding: 1em;
+        width: calc(100% - 2em);
 
         display: grid;
         grid-template-columns: 200px 1fr;
