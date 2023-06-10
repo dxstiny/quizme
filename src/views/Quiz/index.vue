@@ -32,7 +32,7 @@ const answered = computed(() => {
     if (question.type == "matching") {
         const answer = question.answer || {};
         const solution = question.solution || {};
-        return Object.keys(answer).length === Object.keys(solution).length;
+        return Object.keys(solution).every((s) => answer[s] === solution[s]);
     }
 
     return quiz.value.questions[currentQuestion.value]?.answer != null;
@@ -45,13 +45,9 @@ const showTip = () => {
 };
 const checking = ref(false);
 const correct = () => {
-    if (activeQuestion.value.type === "matching") {
-        const solution = activeQuestion.value.solution || {};
-        const answer = activeQuestion.value.answer || {};
-        if (Object.keys(solution).length !== Object.keys(answer).length) {
-            return false;
-        }
+    console.log("correct??");
 
+    if (activeQuestion.value.type === "matching") {
         next();
         return true;
     }
@@ -70,6 +66,12 @@ const correct = () => {
 
     return activeQuestion.value.answer === solution.value;
 };
+const checkText = computed(() => {
+    if (activeQuestion.value.type === "matching") {
+        return "Continue";
+    }
+    return "Check";
+});
 const solution = computed(() => {
     return activeQuestion.value.solution;
 });
@@ -247,7 +249,7 @@ document.addEventListener("keydown", (e) => {
                 />
                 <IconButton
                     class="right"
-                    label="Check"
+                    :label="checkText"
                     type="submit"
                     :disabled="!answered"
                     @click="check"

@@ -28,6 +28,7 @@ const type = computed(() => {
 });
 
 const value = ref(props.editable ? props.question.solution : "");
+const cachedQuestionId = ref(props.question.id);
 watch(value, () => {
     if (props.editable) {
         props.question.solution = value.value;
@@ -41,6 +42,22 @@ watch(value, () => {
 
     props.question.answer = value.value as string;
 });
+watch(
+    () => props.question,
+    () => {
+        if (cachedQuestionId.value == props.question.id) {
+            return;
+        }
+        cachedQuestionId.value = props.question.id;
+        if (props.editable) {
+            value.value = props.question.solution;
+            return;
+        }
+
+        value.value = "";
+    },
+    { deep: true }
+);
 </script>
 <template>
     <div class="question multiple-choice">
