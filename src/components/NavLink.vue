@@ -33,8 +33,11 @@ defineProps({
     color: inherit;
     color: var(--fg-base);
     width: 100%;
-
     container-type: inline-size;
+
+    .entry {
+        border: 2px solid transparent;
+    }
 
     &.router-link-active {
         color: var(--fg-blue);

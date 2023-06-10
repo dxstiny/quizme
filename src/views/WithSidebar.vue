@@ -60,8 +60,8 @@ import NavLink from "@/components/NavLink.vue";
 @media screen and (max-width: 700px) {
     .wrapper {
         grid-template-columns: 1fr;
-        grid-template-rows: 1fr 88px;
-        font-size: 1.5em;
+        grid-template-rows: 1fr 70px;
+        font-size: 1.2em;
 
         .sidebar {
             grid-row: 2;
@@ -71,14 +71,14 @@ import NavLink from "@/components/NavLink.vue";
             border-right: none;
             border-top: 2px solid var(--bg-base-lt);
             border-right: none;
-            padding: 0 1em;
+            padding: 0 0.5em;
 
             .logo {
                 display: none;
             }
 
             .material-symbols-rounded {
-                font-size: 36px;
+                font-size: 30px;
             }
         }
     }

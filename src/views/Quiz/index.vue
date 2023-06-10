@@ -5,9 +5,11 @@ import IconButton from "@/components/IconButton.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useCourseStore } from "@/stores/course";
 import { type IRun } from "@/quiz";
+import { useStatsStore } from "@/stores/stats";
 
 const route = useRoute();
 const courses = useCourseStore();
+const statStore = useStatsStore();
 
 const run = ref({
     correct: [],
@@ -101,6 +103,8 @@ const showEnd = computed(() => {
 const onEnd = () => {
     if (!showEnd.value) return;
     run.value.endTime = new Date();
+    statStore.resetStreak();
+    statStore.addRun(run.value);
 };
 
 const quit = () => {
@@ -120,10 +124,12 @@ const check = () => {
 
     if (correct()) {
         run.value.correct.push(thisId);
+        statStore.addToStreak();
         return;
     }
 
     run.value.wrong.push(thisId);
+    statStore.resetStreak();
 
     if (quiz.value.questions.filter((q) => q.id === thisId).length === 1) {
         quiz.value.questions.push(activeQuestion.value);

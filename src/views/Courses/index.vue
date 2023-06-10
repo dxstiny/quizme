@@ -79,6 +79,16 @@ const courses = useCourseStore();
     flex-wrap: wrap;
 }
 
+@media screen and (max-width: 700px) {
+    .head {
+        flex-direction: column;
+    }
+
+    .courses {
+        flex-direction: column;
+    }
+}
+
 .course {
     display: flex;
     flex-direction: row;
