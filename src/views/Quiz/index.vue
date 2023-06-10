@@ -19,6 +19,7 @@ const run = ref({
 } as IRun);
 
 const quiz = ref(courses.getQuiz(route.params.id as string));
+const quizLength = quiz.value.questions.length;
 
 const router = useRouter();
 const currentQuestion = ref(0);
@@ -45,8 +46,6 @@ const showTip = () => {
 };
 const checking = ref(false);
 const correct = () => {
-    console.log("correct??");
-
     if (activeQuestion.value.type === "matching") {
         next();
         return true;
@@ -169,6 +168,22 @@ document.addEventListener("keydown", (e) => {
         check();
     }
 });
+
+let previousMistakesShown = ref(false);
+let timeout: any = null;
+const showPreviousMistakes = () => {
+    if (timeout) return true;
+    if (previousMistakesShown.value) return false;
+
+    if (currentQuestion.value >= quizLength) {
+        timeout = window.setTimeout(() => {
+            previousMistakesShown.value = true;
+        }, 3000);
+
+        return true;
+    }
+    return false;
+};
 </script>
 <template>
     <div class="quiz">
@@ -188,7 +203,16 @@ document.addEventListener("keydown", (e) => {
                 </div>
             </div>
             <div class="body">
+                <div
+                    v-if="showPreviousMistakes() && !previousMistakesShown"
+                    class="correct-missed"
+                >
+                    <h1>
+                        Let's correct the exercises you got wrong last time!
+                    </h1>
+                </div>
                 <Question
+                    v-else
                     :question="quiz.questions[currentQuestion]"
                     :disabled="checking"
                 />
@@ -307,6 +331,39 @@ document.addEventListener("keydown", (e) => {
     </div>
 </template>
 <style scoped>
+/*
+float in left, stay middle, float out right in 3s
+ */
+@keyframes float-in {
+    0% {
+        transform: translateX(-30%);
+        opacity: 0;
+    }
+    30% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    70% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(30%);
+        opacity: 0;
+    }
+}
+
+.correct-missed {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+
+    & h1 {
+        animation: float-in 3s ease-in-out;
+    }
+}
+
 .quiz {
     display: flex;
     flex-direction: column;
