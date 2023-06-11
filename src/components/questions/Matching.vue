@@ -78,20 +78,19 @@ const selected = ref({
 });
 
 const correctPairs = ref({
-    left: [] as string[],
-    right: [] as string[]
+    left: [] as number[],
+    right: [] as number[]
 });
 const wrongPairs = ref({
-    left: [] as string[],
-    right: [] as string[]
+    left: [] as number[],
+    right: [] as number[]
 });
 
 const select = (index: number, side: "left" | "right") => {
     if (props.disabled) return;
     if (props.editable) return;
     if (!props.question.answer) props.question.answer = {};
-    if (correctPairs.value[side].includes(randomOptions.value[side][index]))
-        return;
+    if (correctPairs.value[side].includes(index)) return;
 
     if (selected.value[side] === index) {
         selected.value[side] = null;
@@ -106,18 +105,21 @@ const select = (index: number, side: "left" | "right") => {
     props.question.answer[left] = right;
 
     if (props.question.solution[left] === right) {
-        correctPairs.value.left.push(left);
-        correctPairs.value.right.push(right);
+        correctPairs.value.left.push(selected.value.left);
+        correctPairs.value.right.push(selected.value.right);
     } else {
-        wrongPairs.value.left.push(left);
-        wrongPairs.value.right.push(right);
+        wrongPairs.value.left.push(selected.value.left);
+        wrongPairs.value.right.push(selected.value.right);
+
+        const lefti = selected.value.left;
+        const righti = selected.value.right;
 
         setTimeout(() => {
             wrongPairs.value.left = wrongPairs.value.left.filter(
-                (l) => l !== left
+                (l) => l !== lefti
             );
             wrongPairs.value.right = wrongPairs.value.right.filter(
-                (r) => r !== right
+                (r) => r !== righti
             );
         }, 1000);
     }
@@ -159,17 +161,13 @@ const select = (index: number, side: "left" | "right") => {
                         // @ts-ignore
                         selected: !editable && selected[side] === index,
                         correct:
-                        !editable &&
+                            !editable &&
                             // @ts-ignore
-                            correctPairs[side].includes(
-                                (randomOptions as any)[side][index]
-                            ),
+                            correctPairs[side].includes(index),
                         wrong:
                             !editable &&
                             // @ts-ignore
-                            wrongPairs[side].includes(
-                                (randomOptions as any)[side][index]
-                            )
+                            wrongPairs[side].includes(index)
                     }"
                     @click="select(index, side as any)"
                 >

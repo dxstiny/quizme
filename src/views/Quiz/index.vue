@@ -373,6 +373,8 @@ float in left, stay middle, float out right in 3s
     flex-direction: column;
     align-items: center;
     height: 100svh;
+    max-height: 100svh;
+    overflow: hidden;
 
     .end {
         flex: 1;
@@ -421,6 +423,7 @@ float in left, stay middle, float out right in 3s
         display: flex;
         flex-direction: column;
         justify-content: center;
+        overflow: auto;
     }
 
     .footer {
