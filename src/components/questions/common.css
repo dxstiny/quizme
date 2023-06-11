@@ -58,7 +58,7 @@ input {
     }
 
     &.selected {
-        background: var(--c-blue-light);
+        background: var(--c-blue-ltr);
         border-color: var(--c-blue);
         color: var(--fg-blue);
     }

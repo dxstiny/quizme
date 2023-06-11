@@ -454,6 +454,7 @@ float in left, stay middle, float out right in 3s
         max-width: none;
         padding: 1em 0;
         width: 100%;
+        min-height: 102px;
 
         .checking,
         .check {
@@ -492,7 +493,7 @@ progress {
     .wrong,
     .correct {
         display: grid;
-        grid-template-columns: min-content 1fr 200px;
+        grid-template-columns: min-content 1fr max-content;
         align-items: start;
         gap: 1em;
         height: 100%;

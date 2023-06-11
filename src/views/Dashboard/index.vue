@@ -2,30 +2,35 @@
 import { computed } from "vue";
 import WithSidebar from "../WithSidebar.vue";
 import { useStatsStore } from "@/stores/stats";
+import { useSettingsStore } from "@/stores/settings";
 
 const statStore = useStatsStore();
+const settingStore = useSettingsStore();
 
 const goals = computed(() => []);
+
+const factor = settingStore.settings.questDifficulty;
+const questMax = [15, 5, 5].map((x) => x * factor);
 
 const quests = computed(() => {
     return [
         {
-            title: "Answer 30 questions",
+            title: `Solve ${questMax[0]} questions`,
             icon: "school",
             progress: statStore.correctQuestions,
-            max: 30
+            max: questMax[0]
         },
         {
-            title: "Spend 10 minutes learning",
+            title: `Spend ${questMax[1]} minutes learning`,
             icon: "timer",
             progress: statStore.timeSpent / 60 / 1000,
-            max: 10
+            max: questMax[1]
         },
         {
-            title: "Get 10 questions correct in a row",
+            title: `Get ${questMax[2]} questions correct in a row`,
             icon: "check",
             progress: statStore.bestStreak,
-            max: 10
+            max: questMax[2]
         }
     ];
 });
@@ -93,6 +98,10 @@ const quests = computed(() => {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 1em;
+
+    @media screen and (max-width: 850px) {
+        grid-template-columns: 1fr;
+    }
 }
 
 .other {
@@ -135,6 +144,7 @@ const quests = computed(() => {
 
         & h3 {
             font-weight: 900;
+            margin-top: 0;
         }
 
         .icon .material-symbols-rounded {

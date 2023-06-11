@@ -31,7 +31,7 @@ export const useCourseStore = defineStore("course", () => {
         return true;
     };
 
-    const getQuiz = (id: string, length = 15) => {
+    const getQuiz = (id: string, length: number | null = null) => {
         const course = getCourse(id);
 
         if (!course) {

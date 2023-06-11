@@ -25,6 +25,11 @@ import NavLink from "@/components/NavLink.vue";
                 icon="question_mark"
                 label="About"
             />
+            <NavLink
+                to="/settings"
+                icon="settings"
+                label="Settings"
+            />
         </div>
         <div class="slot">
             <slot />
