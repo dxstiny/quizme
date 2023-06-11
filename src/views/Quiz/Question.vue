@@ -8,6 +8,7 @@ import Matching from "@/components/questions/Matching.vue";
 import CustomInput from "@/components/questions/CustomInput.vue";
 import TrueFalse from "@/components/questions/TrueFalse.vue";
 import Ordering from "@/components/questions/Ordering.vue";
+import Flashcard from "@/components/questions/Flashcard.vue";
 
 defineProps({
     question: {
@@ -57,6 +58,12 @@ defineProps({
     />
     <Ordering
         v-else-if="question.type === 'ordering'"
+        :question="question"
+        :disabled="disabled"
+        :editable="editable"
+    />
+    <Flashcard
+        v-else-if="question.type === 'flashcard'"
         :question="question"
         :disabled="disabled"
         :editable="editable"

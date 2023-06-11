@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref } from "vue";
+import { computed, nextTick, onMounted, ref } from "vue";
 import Question from "./Question.vue";
 import IconButton from "@/components/IconButton.vue";
 import { useRouter, useRoute } from "vue-router";
@@ -7,10 +7,18 @@ import { useCourseStore } from "@/stores/course";
 import { type IRun } from "@/quiz";
 import { useStatsStore } from "@/stores/stats";
 import type { ICourse } from "@/course";
+import { checkTextAnswer } from "@/answerCorrect";
 
-const route = useRoute();
 const courses = useCourseStore();
 const statStore = useStatsStore();
+const courseId = ref(useRoute().params.id as string);
+
+onMounted(() => {
+    const route = useRoute();
+    const id = route.params.id as string;
+    courseId.value = id;
+    currentQuestion.value = 0;
+});
 
 const run = ref({
     correct: [],
@@ -19,7 +27,7 @@ const run = ref({
     endTime: null
 } as IRun);
 
-const quiz = ref(courses.getQuiz(route.params.id as string));
+const quiz = ref(courses.getQuiz(courseId.value));
 const quizLength = quiz.value.questions.length;
 
 const router = useRouter();
@@ -31,6 +39,10 @@ const activeQuestion = computed(() => {
 
 const answered = computed(() => {
     const question = activeQuestion.value;
+    if (!question) return false;
+
+    if (question.type === "flashcard") return true;
+
     if (question.type == "matching") {
         const answer = question.answer || {};
         const solution = question.solution || {};
@@ -47,7 +59,7 @@ const showTip = () => {
 };
 const checking = ref(false);
 const correct = () => {
-    if (activeQuestion.value.type === "matching") {
+    if (["flashcard", "matching"].includes(activeQuestion.value.type)) {
         next();
         return true;
     }
@@ -61,13 +73,18 @@ const correct = () => {
     if (activeQuestion.value.type == "ordering") {
         const solution = activeQuestion.value.solution || [];
         const answer = activeQuestion.value.answer || [];
+        ("");
         return solution.every((s, i) => s === answer[i]);
+    }
+
+    if (activeQuestion.value.type === "text-answer") {
+        return checkTextAnswer(activeQuestion.value);
     }
 
     return activeQuestion.value.answer === solution.value;
 };
 const checkText = computed(() => {
-    if (activeQuestion.value.type === "matching") {
+    if (["matching", "flashcard"].includes(activeQuestion.value?.type)) {
         return "Continue";
     }
     return "Check";
@@ -95,6 +112,7 @@ const solutionText = computed(() => {
     }
 });
 const next = () => {
+    console.log("next");
     checking.value = false;
     currentQuestion.value++;
     onEnd();
@@ -111,6 +129,7 @@ const onEnd = () => {
 
 const quit = () => {
     if (currentQuestion.value === 0) {
+        console.log("quit");
         router.push("/");
         return;
     }
@@ -121,23 +140,25 @@ const quit = () => {
 };
 
 const check = () => {
+    console.log("check");
     checking.value = true;
     const thisId = activeQuestion.value.id;
-    const thisCourse = courses.getCourse(route.params.id as string) as ICourse;
+    const thisCourse = courses.getCourse(courseId.value) as ICourse;
+    const question = activeQuestion.value;
 
     if (correct()) {
         run.value.correct.push(thisId);
-        courses.onCorrectQuestion(thisCourse, activeQuestion.value);
+        courses.onCorrectQuestion(thisCourse, question);
         statStore.addToStreak();
         return;
     }
 
     run.value.wrong.push(thisId);
-    courses.onIncorrectQuestion(thisCourse, activeQuestion.value);
+    courses.onIncorrectQuestion(thisCourse, question);
     statStore.resetStreak();
 
     if (quiz.value.questions.filter((q) => q.id === thisId).length === 1) {
-        quiz.value.questions.push(activeQuestion.value);
+        quiz.value.questions.push(question);
         // remove answer
         delete quiz.value.questions[quiz.value.questions.length - 1].answer;
     }
@@ -158,11 +179,6 @@ const formattedRunTime = computed(() => {
 
 document.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
-        if (showEnd()) {
-            router.push("/");
-            return;
-        }
-
         if (checking.value) {
             next();
             return;

@@ -11,7 +11,8 @@ interface IQuestion {
         | "true-false"
         | "fill-in-the-blank"
         | "matching"
-        | "ordering";
+        | "ordering"
+        | "flashcard";
     solution:
         | string
         | number
@@ -44,14 +45,24 @@ export interface IMultipleAnswerQuestion extends IQuestion {
 
 export interface ITextAnswerQuestion extends IQuestion {
     type: "text-answer";
-    solution: string;
     answer?: string;
+    ignoreCase?: boolean;
+    ignoreWhitespace?: boolean;
+    ignorePunctuation?: boolean;
+    levenshtein?: number;
+    solution: string; // exact match
+    solutionRegex?: string;
+    solutionAny?: string[];
+    solutionAll?: string[];
 }
 
 export interface INumberAnswerQuestion extends IQuestion {
     type: "number-answer";
     solution: number;
     answer?: number;
+    min?: number;
+    max?: number;
+    delta?: number;
 }
 
 export interface ITrueFalseQuestion extends IQuestion {
@@ -78,6 +89,11 @@ export interface IOrderingQuestion extends IQuestion {
     answer?: string[];
 }
 
+export interface IFlashcard extends IQuestion {
+    type: "flashcard";
+    solution: string;
+}
+
 export const TYPE_OPTIONS = [
     {
         label: "Multiple Choice",
@@ -99,10 +115,10 @@ export const TYPE_OPTIONS = [
         label: "True/False",
         value: "true-false"
     },
-    {
+    /*{
         label: "Fill in the Blank",
         value: "fill-in-the-blank"
-    },
+    },*/
     {
         label: "Matching",
         value: "matching"
@@ -110,6 +126,10 @@ export const TYPE_OPTIONS = [
     {
         label: "Ordering",
         value: "ordering"
+    },
+    {
+        label: "Flashcard",
+        value: "flashcard"
     }
 ];
 
@@ -121,7 +141,8 @@ export type Question =
     | ITrueFalseQuestion
     | IFillInTheBlankQuestion
     | IMatchingQuestion
-    | IOrderingQuestion;
+    | IOrderingQuestion
+    | IFlashcard;
 
 export interface IQuiz {
     id: string;

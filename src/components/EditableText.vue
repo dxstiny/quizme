@@ -52,7 +52,7 @@ const update = (newValue: string) => {
     <div
         class="editable-text"
         :class="{ outlined: !noOutline && editing }"
-        @dblclick="startEditing"
+        @dblclick.stop="startEditing"
     >
         <slot v-if="showSlot" />
         <textarea
@@ -60,7 +60,7 @@ const update = (newValue: string) => {
             ref="area"
             v-model="value"
             @input="update(($event.target as HTMLInputElement).value)"
-            @click="editing = true"
+            @click.stop="editing = true"
             @keydown.enter="editing = false"
             @keydown.esc="editing = false"
             @blur="editing = false"

@@ -89,6 +89,20 @@ watch(
                 :type="type"
                 :disabled="disabled"
             />
+            <template v-if="editable">
+                <div
+                    class="options"
+                    v-if="type == 'text'"
+                >
+                    <div class="option">
+                        <label>Ignore case</label>
+                        <input
+                            type="checkbox"
+                            v-model="(question as ITextAnswerQuestion).ignoreCase"
+                        />
+                    </div>
+                </div>
+            </template>
         </div>
     </div>
 </template>
