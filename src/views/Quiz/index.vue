@@ -99,11 +99,11 @@ const next = () => {
     currentQuestion.value++;
     onEnd();
 };
-const showEnd = computed(() => {
+const showEnd = () => {
     return currentQuestion.value === quiz.value.questions.length;
-});
+};
 const onEnd = () => {
-    if (!showEnd.value) return;
+    if (!showEnd()) return;
     run.value.endTime = new Date();
     statStore.resetStreak();
     statStore.addRun(run.value);
@@ -158,7 +158,7 @@ const formattedRunTime = computed(() => {
 
 document.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
-        if (showEnd.value) {
+        if (showEnd()) {
             router.push("/");
             return;
         }
@@ -191,7 +191,7 @@ const showPreviousMistakes = () => {
 </script>
 <template>
     <div class="quiz">
-        <template v-if="!showEnd">
+        <template v-if="!showEnd()">
             <div class="header">
                 <h1>{{ quiz.title }}</h1>
                 <div class="flex gap-2">
@@ -249,7 +249,7 @@ const showPreviousMistakes = () => {
         <div class="footer">
             <div
                 class="check"
-                v-if="showEnd"
+                v-if="showEnd()"
             >
                 <IconButton
                     class="left"
