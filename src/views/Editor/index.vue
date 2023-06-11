@@ -7,6 +7,7 @@ import { useCourseStore } from "@/stores/course";
 import Dropdown from "@/components/Dropdown.vue";
 import { TYPE_OPTIONS, type Question as IQuestion } from "@/quiz";
 import WithSidebar from "../WithSidebar.vue";
+import { ref } from "vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -59,6 +60,17 @@ const changeQuestionType = (question: IQuestion, to: string) => {
     question.type = to;
     return true;
 };
+
+const collapsedQuestions = ref<string[]>([]);
+const toggleCollapse = (questionId: string) => {
+    if (collapsedQuestions.value.includes(questionId)) {
+        collapsedQuestions.value = collapsedQuestions.value.filter(
+            (id) => id !== questionId
+        );
+    } else {
+        collapsedQuestions.value.push(questionId);
+    }
+};
 </script>
 <template>
     <WithSidebar>
@@ -105,7 +117,7 @@ const changeQuestionType = (question: IQuestion, to: string) => {
                     v-if="course"
                 >
                     <div
-                        v-for="question in course.questions"
+                        v-for="(question, index) in course.questions"
                         class="question-wrapper"
                     >
                         <div class="header">
@@ -116,6 +128,10 @@ const changeQuestionType = (question: IQuestion, to: string) => {
                                         store.moveQuestionUp(course, question)
                                     "
                                 />
+                                <span class="muted">
+                                    {{ index + 1 }} /
+                                    {{ course.questions.length }}
+                                </span>
                                 <IconButton
                                     icon="arrow_downward"
                                     @click="
@@ -132,8 +148,6 @@ const changeQuestionType = (question: IQuestion, to: string) => {
                                     "
                                     label="type"
                                 />
-                            </div>
-                            <div class="right">
                                 <IconButton
                                     icon="delete"
                                     type="action-red"
@@ -145,8 +159,23 @@ const changeQuestionType = (question: IQuestion, to: string) => {
                                     "
                                 />
                             </div>
+                            <div class="right">
+                                <span
+                                    class="muted material-symbols-rounded cursor-pointer"
+                                    @click="toggleCollapse(question.id)"
+                                >
+                                    {{
+                                        collapsedQuestions.includes(question.id)
+                                            ? "expand_less"
+                                            : "expand_more"
+                                    }}
+                                </span>
+                            </div>
                         </div>
-                        <div class="content">
+                        <div
+                            class="content"
+                            v-if="!collapsedQuestions.includes(question.id)"
+                        >
                             <Question
                                 :question="question"
                                 editable
@@ -223,13 +252,34 @@ const changeQuestionType = (question: IQuestion, to: string) => {
             align-items: center;
             gap: 1em;
             padding: 1em;
-            border-bottom: 2px solid var(--bg-base-lt);
+
+            &:not(:last-child) {
+                border-bottom: 2px solid var(--bg-base-lt);
+            }
 
             .left {
                 display: flex;
                 flex-direction: column;
+                align-items: center;
                 gap: 0.5em;
             }
+        }
+
+        .middle {
+            display: flex;
+            gap: 1em;
+            align-items: flex-end;
+
+            .dropdown {
+                flex: 1;
+            }
+        }
+
+        .right {
+            display: flex;
+            gap: 1em;
+            align-items: flex-start;
+            height: 100%;
         }
     }
 }

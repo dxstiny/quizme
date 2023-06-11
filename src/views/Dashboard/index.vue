@@ -3,9 +3,11 @@ import { computed } from "vue";
 import WithSidebar from "../WithSidebar.vue";
 import { useStatsStore } from "@/stores/stats";
 import { useSettingsStore } from "@/stores/settings";
+import { useCourseStore } from "@/stores/course";
 
 const statStore = useStatsStore();
 const settingStore = useSettingsStore();
+const courseStore = useCourseStore();
 
 const goals = computed(() => []);
 
@@ -39,9 +41,26 @@ const quests = computed(() => {
     <WithSidebar>
         <div class="wrap">
             <div class="dashboard">
-                <div class="progress">
+                <div class="current-courses">
                     <h1>Dashboard</h1>
-                    <p class="muted">Welcome back!</p>
+                    <div class="courses">
+                        <div
+                            class="course card"
+                            v-for="course in courseStore.courses"
+                            @click="$router.push(`/quiz/${course.id}`)"
+                        >
+                            <h2>{{ course.title }}</h2>
+                            <div class="progress">
+                                <progress
+                                    :value="courseStore.progress(course)"
+                                    :max="100"
+                                />
+                                <span>
+                                    {{ courseStore.progress(course) }}%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="other">
                     <div
@@ -110,9 +129,24 @@ const quests = computed(() => {
     gap: 1em;
 }
 
+.courses {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+
+    & .course {
+        & .progress {
+            width: calc(100% - 2em);
+        }
+
+        &:hover {
+            cursor: pointer;
+            background: var(--bg-highlight);
+        }
+    }
+}
+
 .card {
-    width: 100%;
-    height: 100%;
     border-radius: 1em;
     border: 2px solid var(--bg-base-lt);
 
@@ -122,6 +156,32 @@ const quests = computed(() => {
 
     & h2 {
         font-weight: 900;
+    }
+}
+
+.progress {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    align-items: center;
+    grid-gap: 1em;
+    width: 100%;
+
+    & progress {
+        width: 100%;
+        height: 1rem;
+        border: none;
+        border-radius: 0.5rem;
+        appearance: none;
+
+        &::-webkit-progress-bar {
+            border-radius: 0.5rem;
+            background-color: var(--bg-base-lt);
+        }
+
+        &::-webkit-progress-value {
+            border-radius: 0.5rem;
+            background-color: var(--fg-yellow);
+        }
     }
 }
 
@@ -149,37 +209,12 @@ const quests = computed(() => {
 
         .icon .material-symbols-rounded {
             font-size: 40px;
+            font-variation-settings: "wght" 700;
             color: var(--c-green);
         }
 
         .info {
             flex: 1;
-        }
-
-        .progress {
-            display: grid;
-            grid-template-columns: 1fr max-content;
-            align-items: center;
-            grid-gap: 1em;
-            width: 100%;
-
-            & progress {
-                width: 100%;
-                height: 1rem;
-                border: none;
-                border-radius: 0.5rem;
-                appearance: none;
-
-                &::-webkit-progress-bar {
-                    border-radius: 0.5rem;
-                    background-color: var(--bg-base-lt);
-                }
-
-                &::-webkit-progress-value {
-                    border-radius: 0.5rem;
-                    background-color: var(--c-good);
-                }
-            }
         }
     }
 }

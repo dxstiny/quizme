@@ -2,9 +2,7 @@ import type { IQuiz } from "./quiz";
 import { useSettingsStore } from "./stores/settings";
 
 export interface ICourse extends IQuiz {
-    mastered?: string[]; // correct 2x
-    seen?: string[]; // correct 1x
-    bad?: Record<string, number>; // [questionId, count]
+    score?: Record<string, number>; // [questionId, count]
 }
 
 export const generateQuiz = (

@@ -6,6 +6,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useCourseStore } from "@/stores/course";
 import { type IRun } from "@/quiz";
 import { useStatsStore } from "@/stores/stats";
+import type { ICourse } from "@/course";
 
 const route = useRoute();
 const courses = useCourseStore();
@@ -122,14 +123,17 @@ const quit = () => {
 const check = () => {
     checking.value = true;
     const thisId = activeQuestion.value.id;
+    const thisCourse = courses.getCourse(route.params.id as string) as ICourse;
 
     if (correct()) {
         run.value.correct.push(thisId);
+        courses.onCorrectQuestion(thisCourse, activeQuestion.value);
         statStore.addToStreak();
         return;
     }
 
     run.value.wrong.push(thisId);
+    courses.onIncorrectQuestion(thisCourse, activeQuestion.value);
     statStore.resetStreak();
 
     if (quiz.value.questions.filter((q) => q.id === thisId).length === 1) {

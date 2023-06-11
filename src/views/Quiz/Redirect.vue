@@ -9,6 +9,6 @@ if (store.courses.length === 0) {
     router.push("/");
 }
 
-const id = store.courses[0].id;
+const id = store.courses[Math.floor(Math.random() * store.courses.length)].id;
 router.push(`/quiz/${id}`);
 </script>

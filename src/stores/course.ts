@@ -102,6 +102,50 @@ export const useCourseStore = defineStore("course", () => {
         course.questions.splice(index + 1, 0, question);
     };
 
+    const onCorrectQuestion = (course: ICourse, question: Question) => {
+        if (!course.score) {
+            course.score = {};
+        }
+
+        if (!course.score[question.id]) {
+            course.score[question.id] = 1;
+            return;
+        }
+
+        course.score[question.id]++;
+    };
+
+    const onIncorrectQuestion = (course: ICourse, question: Question) => {
+        if (!course.score) {
+            course.score = {};
+        }
+
+        if (!course.score[question.id]) {
+            course.score[question.id] = -1;
+            return;
+        }
+
+        course.score[question.id]--;
+    };
+
+    const progress = (course: ICourse) => {
+        if (!course.score) {
+            return 0;
+        }
+
+        const total = course.questions.length;
+        // mastered if answered correctly 2 times
+        const mastered = Object.values(course.score).filter(
+            (score) => score >= 2
+        ).length;
+        // ok if answered correctly 1 time
+        const ok = Object.values(course.score).filter(
+            (score) => score >= 1
+        ).length;
+
+        return Math.round((50 * (ok + mastered)) / total);
+    };
+
     return {
         courses,
         addCourse,
@@ -111,6 +155,9 @@ export const useCourseStore = defineStore("course", () => {
         downloadCourse,
         addFromUpload,
         moveQuestionUp,
-        moveQuestionDown
+        moveQuestionDown,
+        onCorrectQuestion,
+        onIncorrectQuestion,
+        progress
     };
 });
