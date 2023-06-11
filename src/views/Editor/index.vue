@@ -5,7 +5,12 @@ import IconButton from "@/components/IconButton.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useCourseStore } from "@/stores/course";
 import Dropdown from "@/components/Dropdown.vue";
-import { TYPE_OPTIONS, type Question as IQuestion } from "@/quiz";
+import {
+    TYPE_OPTIONS,
+    type Question as IQuestion,
+    type IMultipleChoiceQuestion,
+    type IMultipleAnswerQuestion
+} from "@/quiz";
 import WithSidebar from "../WithSidebar.vue";
 import { ref } from "vue";
 
@@ -43,11 +48,11 @@ const changeQuestionType = (question: IQuestion, to: string) => {
     }
 
     if (to === "multiple-choice") {
-        // @ts-ignore
-        question.options = [];
-        question.solution = 0;
+        (question as IMultipleChoiceQuestion).options = [];
+        (question as IMultipleChoiceQuestion).solution = -1;
     } else if (to === "multiple-answer") {
-        question.solution = [];
+        (question as IMultipleAnswerQuestion).options = [];
+        (question as IMultipleAnswerQuestion).solution = [];
     } else if (to === "ordering") {
         question.solution = [];
     } else if (to === "matching") {

@@ -23,7 +23,7 @@ watch(
 );
 
 const editing = ref(false);
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "change"]);
 const area = ref(null as HTMLTextAreaElement | null);
 const startEditing = () => {
     if (props.locked) return;
@@ -41,6 +41,12 @@ const showSlot = computed(() => {
     if (editing.value) return false;
     return value.value;
 });
+
+const update = (newValue: string) => {
+    value.value = newValue;
+    emit("change", newValue);
+    emit("update:modelValue", newValue);
+};
 </script>
 <template>
     <div
@@ -53,12 +59,7 @@ const showSlot = computed(() => {
             v-else
             ref="area"
             v-model="value"
-            @input="
-                emit(
-                    'update:modelValue',
-                    ($event.target as HTMLTextAreaElement).value
-                )
-            "
+            @input="update(($event.target as HTMLInputElement).value)"
             @click="editing = true"
             @keydown.enter="editing = false"
             @keydown.esc="editing = false"

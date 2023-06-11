@@ -55,52 +55,22 @@ const renameObjKey = (oldObj: any, oldKey: string, newKey: string) => {
     return newObj;
 };
 
-watch(
-    computedRandomOptions,
-    (to, from) => {
-        if (!props.editable) return;
-        // lengths are different
-        if (to.left.length !== from.left.length) return;
+const onOptionChange = (side: string, index: number, to: string) => {
+    if (!props.editable) return;
 
-        // solution stores as { left: right }
-        // find the index in from
-        // if the value is not in to, then it has changed
-
-        // newLeft: elements that are in to but not in from
-        const newLeft = to.left.filter((l: string) => !from.left.includes(l));
-        // oldLeft: elements that are in from but not in to
-        const oldLeft = from.left.filter((l: string) => !to.left.includes(l));
-
-        // length should be 0
-        if (newLeft.length !== 1 || oldLeft.length !== 1) {
-            // value changed
-            // replace the old right value with the new right value
-            const newRightValue = to.right.find(
-                (r: string) => r !== from.right[0]
-            );
-            // find the index of the newRightValue
-            const newRightIndex = to.right.findIndex(
-                (r: string) => r === newRightValue
-            );
-            const key = to.left[newRightIndex];
-            if (!key) return;
-
-            props.question.solution[key] = newRightValue;
-            return;
-        }
-
-        const oldKey = oldLeft[0];
-        const newKey = newLeft[0];
-
-        // replace the old right value with the new right value
+    if (side == "left") {
+        const oldKey = randomOptions.value.left[index];
+        const newKey = to;
         props.question.solution = renameObjKey(
             props.question.solution,
             oldKey,
             newKey
         );
-    },
-    { deep: true }
-);
+    } else {
+        const oldKey = randomOptions.value.left[index];
+        props.question.solution[oldKey] = to;
+    }
+};
 
 const selected = ref({
     left: null as null | number,
@@ -206,6 +176,7 @@ const select = (index: number, side: "left" | "right") => {
                     <EditableText
                         :locked="!editable"
                         no-outline
+                        @change="(to) => onOptionChange(side, index, to)"
                         v-model="
                             // @ts-ignore
                             randomOptions[side][index]
