@@ -444,7 +444,7 @@ float in left, stay middle, float out right in 3s
                     font-size: 1.5rem;
                     border-radius: 0.6em;
                     font-weight: 900;
-                    background: white;
+                    background: var(--bg-base);
                     color: var(--fg-yellow);
                     padding: 1em;
                     width: max-content;

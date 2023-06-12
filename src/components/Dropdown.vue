@@ -64,6 +64,8 @@ select {
     padding: 0.5em;
     font-size: 1rem;
     font-family: inherit;
+    background: var(--bg-base);
+    color: var(--fg-base);
 
     &:focus {
         outline: none;

@@ -8,7 +8,6 @@
 
     --bg-base: white;
     --bg-base-lt: #e5e5e5;
-    --bg-base-ltr: #cecece;
     --bg-highlight: #f7f7f7;
 
     --c-green: #58cc02;
@@ -24,4 +23,24 @@
     --c-good-lt: var(--c-green-lt);
     --c-bad: var(--c-red);
     --c-bad-lt: var(--c-red-lt);
+
+    @media (prefers-color-scheme: dark) {
+        --fg-base: #eff7fa;
+        --bg-base: #141f23;
+        --bg-base-lt: #526168;
+        --bg-highlight: #202f36;
+        --c-blue-ltr: rgb(20, 50, 59);
+        --c-green-ltr: #203510;
+        --c-red-ltr: #301010;
+    }
+}
+
+input {
+    background: var(--bg-base);
+    color: var(--fg-base);
+    margin-bottom: 2px;
+
+    &:focus {
+        outline: 2px solid var(--c-blue);
+    }
 }
