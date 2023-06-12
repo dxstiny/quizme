@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, reAudioPlayer ONE.
+ * Copyright (c) 2023, dxstiny.
  * Licenced under the GNU General Public License v3.0
  */
 
