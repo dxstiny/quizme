@@ -103,6 +103,8 @@ const quests = computed(() => {
     </WithSidebar>
 </template>
 <style scoped>
+@import "@/assets/progress.css";
+
 .wrap {
     padding: 1em;
     width: calc(100% - 2em);
@@ -156,32 +158,6 @@ const quests = computed(() => {
 
     & h2 {
         font-weight: 900;
-    }
-}
-
-.progress {
-    display: grid;
-    grid-template-columns: 1fr max-content;
-    align-items: center;
-    grid-gap: 1em;
-    width: 100%;
-
-    & progress {
-        width: 100%;
-        height: 1rem;
-        border: none;
-        border-radius: 0.5rem;
-        appearance: none;
-
-        &::-webkit-progress-bar {
-            border-radius: 0.5rem;
-            background-color: var(--bg-base-lt);
-        }
-
-        &::-webkit-progress-value {
-            border-radius: 0.5rem;
-            background-color: var(--fg-yellow);
-        }
     }
 }
 

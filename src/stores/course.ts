@@ -142,8 +142,11 @@ export const useCourseStore = defineStore("course", () => {
         const ok = Object.values(course.score).filter(
             (score) => score >= 1
         ).length;
-
         return Math.round((50 * (ok + mastered)) / total);
+    };
+
+    const resetProgress = (course: ICourse) => {
+        course.score = {};
     };
 
     return {
@@ -158,6 +161,7 @@ export const useCourseStore = defineStore("course", () => {
         moveQuestionDown,
         onCorrectQuestion,
         onIncorrectQuestion,
-        progress
+        progress,
+        resetProgress
     };
 });

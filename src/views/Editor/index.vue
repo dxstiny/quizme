@@ -94,6 +94,19 @@ const toggleCollapse = (questionId: string) => {
                     <EditableText v-model="course.description">
                         <p class="muted">{{ course.description }}</p>
                     </EditableText>
+                    <div class="progress">
+                        <IconButton
+                            icon="replay"
+                            @click="store.resetProgress(course)"
+                        />
+                        <div class="bar">
+                            <progress
+                                :value="store.progress(course)"
+                                max="100"
+                            />
+                        </div>
+                        <span class="muted">{{ store.progress(course) }}%</span>
+                    </div>
                     <div class="actions">
                         <IconButton
                             icon="file_download"
@@ -112,7 +125,7 @@ const toggleCollapse = (questionId: string) => {
                             type="action-red"
                             @click="
                                 store.removeCourse(course.id) &&
-                                    router.push('/')
+                                    router.push('/courses')
                             "
                         />
                     </div>
@@ -212,6 +225,13 @@ const toggleCollapse = (questionId: string) => {
 </template>
 
 <style scoped>
+@import "@/assets/progress.css";
+
+.progress {
+    grid-template-columns: max-content 1fr max-content;
+    margin-bottom: 2em;
+}
+
 .wrap {
     display: flex;
     flex-direction: column;
