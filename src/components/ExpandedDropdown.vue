@@ -4,6 +4,7 @@ import { type PropType, ref, watch } from "vue";
 interface IDropdownOption {
     value: string | number;
     label: string;
+    description?: string;
 }
 
 const props = defineProps({

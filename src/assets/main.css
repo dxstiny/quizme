@@ -44,3 +44,7 @@ h3 {
 .muted {
     color: var(--fg-base-mute);
 }
+
+.strikethrough {
+    text-decoration: line-through;
+}

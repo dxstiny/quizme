@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import { computed, nextTick, onMounted, ref } from "vue";
-import Question from "./Question.vue";
+import { computed, onMounted, ref } from "vue";
+import Question from "@/components/questions/index.vue";
 import IconButton from "@/components/IconButton.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useCourseStore } from "@/stores/course";
 import { type IRun } from "@/quiz";
 import { useStatsStore } from "@/stores/stats";
 import type { ICourse } from "@/course";
-import { checkTextAnswer } from "@/answerCorrect";
+import { checkNumber, checkTextAnswer } from "@/answerCorrect";
 
 const courses = useCourseStore();
 const statStore = useStatsStore();
@@ -81,6 +81,10 @@ const correct = () => {
         return checkTextAnswer(activeQuestion.value);
     }
 
+    if (activeQuestion.value.type === "number-answer") {
+        return checkNumber(activeQuestion.value);
+    }
+
     return activeQuestion.value.answer === solution.value;
 };
 const checkText = computed(() => {
@@ -104,15 +108,32 @@ const solutionText = computed(() => {
     if (question.type === "true-false") {
         return question.solution ? "True" : "False";
     }
-    if (["text-answer", "number-answer"].includes(question.type)) {
-        return question.solution;
+    if (question.type === "text-answer") {
+        if (question.solution) {
+            return question.solution;
+        }
+        if (question.solutionRegex) {
+            return `Matches ${question.solutionRegex}`;
+        }
+        if (question.solutionAny) {
+            return `Matches any of ${question.solutionAny.join(", ")}`;
+        }
+        if (question.solutionAll) {
+            return `Matches all of ${question.solutionAll.join(", ")}`;
+        }
+        return "Any";
+    }
+    if (question.type === "number-answer") {
+        if (question.min != null && question.max != null) {
+            return "Between " + question.min + " and " + question.max;
+        }
+        return `${question.solution} (+/- ${question.delta})`;
     }
     if (question.type === "ordering") {
         return question.solution.join(", ");
     }
 });
 const next = () => {
-    console.log("next");
     checking.value = false;
     currentQuestion.value++;
     onEnd();
@@ -129,7 +150,6 @@ const onEnd = () => {
 
 const quit = () => {
     if (currentQuestion.value === 0) {
-        console.log("quit");
         router.push("/");
         return;
     }
@@ -140,7 +160,6 @@ const quit = () => {
 };
 
 const check = () => {
-    console.log("check");
     checking.value = true;
     const thisId = activeQuestion.value.id;
     const thisCourse = courses.getCourse(courseId.value) as ICourse;

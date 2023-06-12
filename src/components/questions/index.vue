@@ -2,13 +2,14 @@
 import { type Question } from "../../quiz";
 import { type PropType } from "vue";
 
-import MultipleChoice from "@/components/questions/MultipleChoice.vue";
-import MultipleAnswers from "@/components/questions/MultipleAnswers.vue";
-import Matching from "@/components/questions/Matching.vue";
-import CustomInput from "@/components/questions/CustomInput.vue";
-import TrueFalse from "@/components/questions/TrueFalse.vue";
-import Ordering from "@/components/questions/Ordering.vue";
-import Flashcard from "@/components/questions/Flashcard.vue";
+import MultipleChoice from "./MultipleChoice.vue";
+import MultipleAnswers from "./MultipleAnswers.vue";
+import Matching from "./Matching.vue";
+import NumberInput from "./NumberInput.vue";
+import TextInput from "./TextInput.vue";
+import TrueFalse from "./TrueFalse.vue";
+import Ordering from "./Ordering.vue";
+import Flashcard from "./Flashcard.vue";
 
 defineProps({
     question: {
@@ -44,9 +45,15 @@ defineProps({
         :disabled="disabled"
         :editable="editable"
     />
-    <CustomInput
-        v-else-if="['text-answer', 'number-answer'].includes(question.type)"
-        :question="question as any"
+    <NumberInput
+        v-else-if="question.type === 'number-answer'"
+        :question="question"
+        :disabled="disabled"
+        :editable="editable"
+    />
+    <TextInput
+        v-else-if="question.type === 'text-answer'"
+        :question="question"
         :disabled="disabled"
         :editable="editable"
     />

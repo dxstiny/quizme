@@ -6,7 +6,6 @@ import {
 } from "@/stores/settings";
 import WithSidebar from "../WithSidebar.vue";
 import ExpandedDropdown from "@/components/ExpandedDropdown.vue";
-import CustomInput from "@/components/questions/CustomInput.vue";
 
 const settings = useSettingsStore();
 </script>
@@ -51,6 +50,13 @@ const settings = useSettingsStore();
                 <div class="other">
                     <div class="card">
                         <h2>About you</h2>
+                        <p class="muted">
+                            We want to
+                            <span class="strikethrough"
+                                >sell your data to facebook </span
+                            >personalise the UI for you, to make you feel at
+                            home!
+                        </p>
                         <div class="input">
                             <span class="material-symbols-rounded">
                                 person

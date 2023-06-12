@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Question from "../Quiz/Question.vue";
+import Question from "@/components/questions/index.vue";
 import EditableText from "@/components/EditableText.vue";
 import IconButton from "@/components/IconButton.vue";
 import { useRoute, useRouter } from "vue-router";
@@ -94,18 +94,24 @@ const toggleCollapse = (questionId: string) => {
                     <EditableText v-model="course.description">
                         <p class="muted">{{ course.description }}</p>
                     </EditableText>
-                    <div class="progress">
+                    <div class="card">
+                        <h3>Progress</h3>
                         <IconButton
                             icon="replay"
+                            label="Reset"
                             @click="store.resetProgress(course)"
                         />
-                        <div class="bar">
-                            <progress
-                                :value="store.progress(course)"
-                                max="100"
-                            />
+                        <div class="progress">
+                            <div class="bar">
+                                <progress
+                                    :value="store.progress(course)"
+                                    max="100"
+                                />
+                            </div>
+                            <span class="muted"
+                                >{{ store.progress(course) }}%</span
+                            >
                         </div>
-                        <span class="muted">{{ store.progress(course) }}%</span>
                     </div>
                     <div class="actions">
                         <IconButton
@@ -227,9 +233,24 @@ const toggleCollapse = (questionId: string) => {
 <style scoped>
 @import "@/assets/progress.css";
 
-.progress {
-    grid-template-columns: max-content 1fr max-content;
-    margin-bottom: 2em;
+.card {
+    border-radius: 1em;
+    border: 2px solid var(--bg-base-lt);
+
+    &:has(.progress) {
+        display: flex;
+        flex-direction: column;
+        padding: 1em;
+        gap: 1em;
+        margin-bottom: 1em;
+
+        & h3 {
+            font-weight: 900;
+            font-size: 1rem;
+            margin: 0;
+            text-transform: uppercase;
+        }
+    }
 }
 
 .wrap {
