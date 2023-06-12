@@ -115,10 +115,10 @@ const solutionText = computed(() => {
         if (question.solutionRegex) {
             return `Matches ${question.solutionRegex}`;
         }
-        if (question.solutionAny) {
+        if (question.solutionAny?.length) {
             return `Matches any of ${question.solutionAny.join(", ")}`;
         }
-        if (question.solutionAll) {
+        if (question.solutionAll?.length) {
             return `Matches all of ${question.solutionAll.join(", ")}`;
         }
         return "Any";
