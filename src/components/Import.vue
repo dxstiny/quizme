@@ -15,9 +15,17 @@ const loadFromStorage = () => {
     );
     if (questions.value.length > 0) {
         importDialog.value?.showModal();
+    } else {
+        importDialog.value?.close();
     }
 };
-window.addEventListener("storage", () => {});
+
+var originalSetItem = localStorage.setItem;
+localStorage.setItem = function () {
+    // @ts-ignore
+    originalSetItem.apply(this, arguments);
+    loadFromStorage();
+};
 
 onMounted(loadFromStorage);
 
@@ -67,6 +75,8 @@ const importQuestions = () => {
 dialog {
     border-radius: 1em;
     border: 2px solid var(--bg-base-lt);
+    background: var(--bg-base);
+    color: var(--fg-base);
 
     .content {
         display: flex;

@@ -1,4 +1,8 @@
-const urlStarts = ["https://elearning.hslu.ch/ilias/", "http://localhost:"];
+const urlStarts = [
+    "https://elearning.hslu.ch/ilias/",
+    "http://localhost:",
+    "https://dxstiny.github.io/"
+];
 
 chrome.tabs.onActivated.addListener(function (activeInfo) {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {

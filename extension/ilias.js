@@ -2,7 +2,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const tab = tabs[0];
 
     document.querySelector("#action").innerText = tab.url.startsWith(
-        "http://localhost:"
+        "https://dxstiny.github.io/"
     )
         ? "Save"
         : "Export";
@@ -87,7 +87,7 @@ document.getElementById("action").addEventListener("click", () => {
             await chrome.storage.local.set({ questions: [] });
         };
 
-        if (tab.url.startsWith("http://localhost:")) {
+        if (tab.url.startsWith("https://dxstiny.github.io/")) {
             chrome.scripting
                 .executeScript({
                     target: { tabId: tab.id },
