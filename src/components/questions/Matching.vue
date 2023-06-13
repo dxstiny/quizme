@@ -22,10 +22,20 @@ const randomOptions = ref({
     left: [] as string[],
     right: [] as string[]
 });
+const correctPairs = ref({
+    left: [] as number[],
+    right: [] as number[]
+});
+const wrongPairs = ref({
+    left: [] as number[],
+    right: [] as number[]
+});
 
 const randomise = () => {
     const leftSide = Object.keys(props.question.solution);
     const rightSide = Object.values(props.question.solution);
+    correctPairs.value.left = [];
+    correctPairs.value.right = [];
 
     if (props.editable) {
         randomOptions.value.left = leftSide;
@@ -38,9 +48,6 @@ const randomise = () => {
 };
 randomise();
 watch(() => props.question.solution, randomise, { deep: true });
-const computedRandomOptions = computed(() =>
-    JSON.parse(JSON.stringify(randomOptions.value))
-);
 const renameObjKey = (oldObj: any, oldKey: string, newKey: string) => {
     const keys = Object.keys(oldObj);
     const newObj = keys.reduce((acc: any, val) => {
@@ -75,15 +82,6 @@ const onOptionChange = (side: string, index: number, to: string) => {
 const selected = ref({
     left: null as null | number,
     right: null as null | number
-});
-
-const correctPairs = ref({
-    left: [] as number[],
-    right: [] as number[]
-});
-const wrongPairs = ref({
-    left: [] as number[],
-    right: [] as number[]
 });
 
 const select = (index: number, side: "left" | "right") => {

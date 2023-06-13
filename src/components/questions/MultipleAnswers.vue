@@ -38,6 +38,7 @@ const randomise = () => {
         randomOptions.value.findIndex((text) => text === option)
     );
     props.question.options = props.question.options;
+    props.question.answer = props.question.answer ?? [];
 };
 randomise();
 watch(() => props.question.options, randomise);

@@ -30,7 +30,12 @@ export const checkTextAnswer = (question: ITextAnswerQuestion) => {
     }
 
     if (question.solutionRegex) {
-        const regex = new RegExp(question.solutionRegex);
+        const regexFunction = new Function("return " + question.solutionRegex);
+        let regex = regexFunction();
+        if (regex instanceof RegExp) {
+            return regex.test(answer);
+        }
+        regex = new RegExp(question.solutionRegex);
         return regex.test(answer);
     }
 
