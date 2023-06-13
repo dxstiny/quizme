@@ -13,6 +13,10 @@ const props = defineProps({
     noOutline: {
         type: Boolean,
         default: false
+    },
+    placeholder: {
+        type: String,
+        default: "Click to edit"
     }
 });
 
@@ -47,6 +51,12 @@ const update = (newValue: string) => {
     emit("change", newValue);
     emit("update:modelValue", newValue);
 };
+
+const autoResize = () => {
+    if (!area.value) return;
+    area.value.style.height = "auto";
+    area.value.style.height = area.value.scrollHeight + "px";
+};
 </script>
 <template>
     <div
@@ -59,12 +69,13 @@ const update = (newValue: string) => {
             v-else
             ref="area"
             v-model="value"
-            @input="update(($event.target as HTMLInputElement).value)"
+            @change="update(($event.target as HTMLInputElement).value)"
+            @input="autoResize()"
             @click.stop="editing = true"
             @keydown.enter="editing = false"
             @keydown.esc="editing = false"
             @blur="editing = false"
-            placeholder="Click to edit"
+            :placeholder="placeholder"
         />
     </div>
 </template>

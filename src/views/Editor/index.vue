@@ -217,8 +217,8 @@ const toggleCollapse = (questionId: string) => {
                                         .toString(36)
                                         .substring(2, 9),
                                     type: 'text-answer',
-                                    title: 'Question',
-                                    question: 'Question',
+                                    title: '',
+                                    question: '',
                                     solution: ''
                                 })
                             "

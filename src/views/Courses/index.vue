@@ -18,7 +18,7 @@ const courses = useCourseStore();
                         @click="
                             courses.addCourse({
                                 title: 'New Course',
-                                description: 'Course description',
+                                description: '',
                                 questions: [],
                                 id: Math.random().toString(36).substring(7)
                             })

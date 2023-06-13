@@ -264,7 +264,7 @@ const showPreviousMistakes = () => {
             <h1>Well done!</h1>
             <div class="review">
                 <div class="score">
-                    <span>SCORE</span>
+                    <span class="label">SCORE</span>
                     <span class="value">
                         {{
                             Math.round(
@@ -276,7 +276,7 @@ const showPreviousMistakes = () => {
                     </span>
                 </div>
                 <div class="time">
-                    <span>TIME</span>
+                    <span class="label">TIME</span>
                     <span class="value">{{ formattedRunTime }}</span>
                 </div>
             </div>
@@ -426,6 +426,10 @@ float in left, stay middle, float out right in 3s
         .review {
             display: flex;
             gap: 1em;
+
+            .label {
+                color: var(--bg-base);
+            }
 
             & > div {
                 display: flex;
