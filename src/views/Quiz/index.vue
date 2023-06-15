@@ -73,7 +73,6 @@ const correct = () => {
     if (activeQuestion.value.type == "ordering") {
         const solution = activeQuestion.value.solution || [];
         const answer = activeQuestion.value.answer || [];
-        ("");
         return solution.every((s, i) => s === answer[i]);
     }
 
@@ -84,6 +83,8 @@ const correct = () => {
     if (activeQuestion.value.type === "number-answer") {
         return checkNumber(activeQuestion.value);
     }
+
+    console.log(activeQuestion.value.answer);
 
     return activeQuestion.value.answer === solution.value;
 };
@@ -177,7 +178,7 @@ const check = () => {
     statStore.resetStreak();
 
     if (quiz.value.questions.filter((q) => q.id === thisId).length === 1) {
-        quiz.value.questions.push(question);
+        quiz.value.questions.push({ ...question });
         // remove answer
         delete quiz.value.questions[quiz.value.questions.length - 1].answer;
     }
@@ -254,6 +255,7 @@ const showPreviousMistakes = () => {
                     v-else
                     :question="quiz.questions[currentQuestion]"
                     :disabled="checking"
+                    :show-correction="checking"
                 />
             </div>
         </template>

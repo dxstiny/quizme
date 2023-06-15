@@ -20,59 +20,34 @@ defineProps({
         type: Boolean,
         default: false
     },
+    showCorrection: {
+        type: Boolean,
+        default: false
+    },
     editable: {
         type: Boolean,
         default: false
     }
 });
+
+const component = {
+    "multiple-choice": MultipleChoice,
+    "multiple-answer": MultipleAnswers,
+    matching: Matching,
+    "number-answer": NumberInput,
+    "text-answer": TextInput,
+    "true-false": TrueFalse,
+    ordering: Ordering,
+    flashcard: Flashcard,
+    "fill-in-the-blank": TextInput
+};
 </script>
 <template>
-    <MultipleChoice
-        v-if="question.type === 'multiple-choice'"
-        :question="question"
+    <component
+        :is="component[question.type]"
+        :question="(question as any)"
         :disabled="disabled"
         :editable="editable"
-    />
-    <MultipleAnswers
-        v-else-if="question.type === 'multiple-answer'"
-        :question="question"
-        :disabled="disabled"
-        :editable="editable"
-    />
-    <Matching
-        v-else-if="question.type === 'matching'"
-        :question="question"
-        :disabled="disabled"
-        :editable="editable"
-    />
-    <NumberInput
-        v-else-if="question.type === 'number-answer'"
-        :question="question"
-        :disabled="disabled"
-        :editable="editable"
-    />
-    <TextInput
-        v-else-if="question.type === 'text-answer'"
-        :question="question"
-        :disabled="disabled"
-        :editable="editable"
-    />
-    <TrueFalse
-        v-else-if="question.type === 'true-false'"
-        :question="question"
-        :disabled="disabled"
-        :editable="editable"
-    />
-    <Ordering
-        v-else-if="question.type === 'ordering'"
-        :question="question"
-        :disabled="disabled"
-        :editable="editable"
-    />
-    <Flashcard
-        v-else-if="question.type === 'flashcard'"
-        :question="question"
-        :disabled="disabled"
-        :editable="editable"
+        :showCorrection="showCorrection"
     />
 </template>

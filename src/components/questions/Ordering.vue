@@ -16,6 +16,10 @@ const props = defineProps({
     editable: {
         type: Boolean,
         default: false
+    },
+    showCorrection: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -76,7 +80,14 @@ watch(
                 class="options"
             >
                 <template #item="{ element, index }">
-                    <div class="option">
+                    <div
+                        class="option"
+                        :class="{
+                            wrong:
+                                showCorrection &&
+                                question.solution[index] !== element
+                        }"
+                    >
                         <EditableText
                             :locked="!editable"
                             no-outline

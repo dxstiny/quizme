@@ -15,6 +15,10 @@ const props = defineProps({
     editable: {
         type: Boolean,
         default: false
+    },
+    showCorrection: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -70,6 +74,25 @@ const select = (index: number) => {
 
     props.question.answer.push(index);
 };
+
+// correct: editable && props.question.solution.includes(index)
+const showAsCorrect = (index: number) => {
+    if (props.editable && props.question.solution.includes(index)) return true;
+    if (props.showCorrection && props.question.solution.includes(index))
+        return true;
+    return false;
+};
+
+const showAsWrong = (index: number) => {
+    if (props.editable && !props.question.solution.includes(index)) return true;
+    if (
+        props.showCorrection &&
+        !props.question.solution.includes(index) &&
+        props.question.answer?.includes(index)
+    )
+        return true;
+    return false;
+};
 </script>
 <template>
     <div class="question multiple-choice">
@@ -98,7 +121,8 @@ const select = (index: number) => {
                 :class="{
                     selected:
                         !editable && props.question?.answer?.includes(index),
-                    correct: editable && props.question.solution.includes(index)
+                    correct: showAsCorrect(index),
+                    wrong: showAsWrong(index)
                 }"
                 @click="select(index)"
                 v-for="(option, index) in randomOptions"

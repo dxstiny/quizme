@@ -70,4 +70,10 @@ input {
         border-color: var(--c-green);
         color: var(--fg-green);
     }
+
+    &.wrong {
+        background: var(--c-red-ltr);
+        border-color: var(--c-red);
+        color: var(--fg-red);
+    }
 }

@@ -13,7 +13,7 @@ const courses = useCourseStore();
                 <div class="actions">
                     <IconButton
                         icon="add"
-                        label="Add"
+                        label="Create"
                         type="action-green"
                         @click="
                             courses.addCourse({
