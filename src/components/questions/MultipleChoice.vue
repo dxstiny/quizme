@@ -57,7 +57,13 @@ const select = (index: number) => {
 
 const showAsCorrect = (index: number) => {
     if (props.editable && props.question.solution === index) return true;
-    if (props.showCorrection && props.question.solution === index) return true;
+    if (
+        props.showCorrection &&
+        props.question.solution === index &&
+        props.question.answer === index
+    ) {
+        return true;
+    }
 };
 
 const showAsWrong = (index: number) => {
@@ -65,8 +71,16 @@ const showAsWrong = (index: number) => {
         props.showCorrection &&
         props.question.solution !== index &&
         props.question.answer === index
-    )
+    ) {
         return true;
+    }
+    if (
+        props.showCorrection &&
+        props.question.solution === index &&
+        props.question.answer !== index
+    ) {
+        return true;
+    }
 };
 </script>
 <template>
@@ -98,7 +112,9 @@ const showAsWrong = (index: number) => {
                     correct: showAsCorrect(index),
                     wrong: showAsWrong(index)
                 }"
+                tabindex="0"
                 @click="select(index)"
+                @keypress.space.stop="select(index)"
                 v-for="(option, index) in randomOptions"
             >
                 <EditableText

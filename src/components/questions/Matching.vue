@@ -155,6 +155,7 @@ const select = (index: number, side: "left" | "right") => {
                 <div
                     class="option"
                     v-for="side in ['left', 'right']"
+                    tabindex=0
                     :class="{
                         // @ts-ignore
                         selected: !editable && selected[side] === index,
@@ -168,6 +169,7 @@ const select = (index: number, side: "left" | "right") => {
                             wrongPairs[side].includes(index)
                     }"
                     @click="select(index, side as any)"
+                    @keypress.space.stop="select(index, side as any)"
                 >
                     <EditableText
                         :locked="!editable"

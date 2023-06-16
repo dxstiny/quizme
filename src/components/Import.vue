@@ -39,7 +39,7 @@ const options = computed(() => {
     return options;
 });
 
-const toCourse = ref(options.value[0].value);
+const toCourse = ref(options.value[0]?.value);
 
 const importQuestions = () => {
     const course = store.courses.find((course) => course.id === toCourse.value);

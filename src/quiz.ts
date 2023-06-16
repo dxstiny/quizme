@@ -63,6 +63,8 @@ export interface INumberAnswerQuestion extends IQuestion {
     min?: number;
     max?: number;
     delta?: number;
+    allowCalculator?: boolean;
+    allowNotes?: boolean;
 }
 
 export interface ITrueFalseQuestion extends IQuestion {

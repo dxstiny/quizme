@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import EditableText from "../EditableText.vue";
+import Switch from "../Switch.vue";
 import { type INumberAnswerQuestion } from "../../quiz";
 import { type PropType, ref, watch, onMounted } from "vue";
 import ExpandedDropdown from "../ExpandedDropdown.vue";
@@ -75,6 +76,10 @@ watch(type, () => {
 onMounted(() => {
     if (!props.editable) return;
 
+    if (props.question.allowNotes == null) {
+        props.question.allowNotes = true;
+    }
+
     if (props.question.min != null || props.question.max != null) {
         type.value = "range";
         return;
@@ -84,7 +89,7 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div class="question multiple-choice">
+    <div class="question">
         <div class="header">
             <EditableText
                 :locked="!editable"
@@ -117,19 +122,31 @@ onMounted(() => {
         </div>
         <template v-else>
             <div class="settings">
-                <ExpandedDropdown
-                    :options="typeOptions"
-                    v-model="type"
-                >
-                    <template #label="{ option }">
-                        <div class="label">
-                            <h3>{{ option.label }}</h3>
-                            <p v-if="option.description">
-                                {{ option.description }}
-                            </p>
-                        </div>
-                    </template>
-                </ExpandedDropdown>
+                <div class="type-and-help">
+                    <ExpandedDropdown
+                        :options="typeOptions"
+                        v-model="type"
+                    >
+                        <template #label="{ option }">
+                            <div class="label">
+                                <h3>{{ option.label }}</h3>
+                                <p v-if="option.description">
+                                    {{ option.description }}
+                                </p>
+                            </div>
+                        </template>
+                    </ExpandedDropdown>
+                    <div class="settings">
+                        <Switch
+                            label="allow calculator"
+                            v-model="question.allowCalculator"
+                        />
+                        <Switch
+                            label="allow notes"
+                            v-model="question.allowNotes"
+                        />
+                    </div>
+                </div>
                 <template v-if="type == 'exact'">
                     <div class="pair">
                         <label>Value</label>
@@ -197,6 +214,16 @@ onMounted(() => {
         display: flex;
         flex-direction: column;
         gap: 0.5em;
+    }
+
+    .type-and-help {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1em;
+
+        .settings {
+            margin: 0;
+        }
     }
 }
 

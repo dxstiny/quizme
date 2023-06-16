@@ -76,4 +76,9 @@ input {
         border-color: var(--c-red);
         color: var(--fg-red);
     }
+
+    &:focus {
+        outline: none;
+        border-color: var(--fg-base);
+    }
 }

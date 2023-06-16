@@ -7,50 +7,52 @@ const courses = useCourseStore();
 </script>
 <template>
     <WithSidebar>
-        <div class="dashboard">
-            <div class="head">
-                <h1>Courses</h1>
-                <div class="actions">
-                    <IconButton
-                        icon="add"
-                        label="Create"
-                        type="action-green"
-                        @click="
-                            courses.addCourse({
-                                title: 'New Course',
-                                description: '',
-                                questions: [],
-                                id: Math.random().toString(36).substring(7)
-                            })
-                        "
-                    />
-                    <IconButton
-                        icon="file_upload"
-                        label="Upload"
-                        @click="courses.addFromUpload"
-                    />
-                </div>
-            </div>
-            <div class="courses">
-                <div
-                    v-for="course in courses.courses"
-                    class="course"
-                >
-                    <div class="info">
-                        <h2>{{ course.title }}</h2>
-                        <p class="muted">{{ course.description }}</p>
-                    </div>
+        <div class="wrap">
+            <div class="dashboard">
+                <div class="head">
+                    <h1>Courses</h1>
                     <div class="actions">
                         <IconButton
-                            label="Edit"
-                            icon="edit"
-                            @click="$router.push(`/courses/${course.id}`)"
+                            icon="add"
+                            label="Create"
+                            type="action-green"
+                            @click="
+                                courses.addCourse({
+                                    title: 'New Course',
+                                    description: '',
+                                    questions: [],
+                                    id: Math.random().toString(36).substring(7)
+                                })
+                            "
                         />
                         <IconButton
-                            label="Learn"
-                            icon="school"
-                            @click="$router.push(`/quiz/${course.id}`)"
+                            icon="file_upload"
+                            label="Upload"
+                            @click="courses.addFromUpload"
                         />
+                    </div>
+                </div>
+                <div class="courses">
+                    <div
+                        v-for="course in courses.courses"
+                        class="course"
+                    >
+                        <div class="info">
+                            <h2>{{ course.title }}</h2>
+                            <p class="muted">{{ course.description }}</p>
+                        </div>
+                        <div class="actions">
+                            <IconButton
+                                label="Edit"
+                                icon="edit"
+                                @click="$router.push(`/courses/${course.id}`)"
+                            />
+                            <IconButton
+                                label="Learn"
+                                icon="school"
+                                @click="$router.push(`/quiz/${course.id}`)"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -58,8 +60,20 @@ const courses = useCourseStore();
     </WithSidebar>
 </template>
 <style scoped>
-.dashboard {
+.wrap {
     padding: 1em;
+    width: calc(100% - 2em);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dashboard {
+    width: 100%;
+    max-width: 1080px;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
 }
 
 .head {
