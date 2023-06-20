@@ -51,37 +51,46 @@ export const useCourseStore = defineStore("course", () => {
         element.click();
     };
 
-    const uploadCourse = () => {
-        return new Promise<ICourse>((resolve, reject) => {
+    const uploadCourses = () => {
+        return new Promise<ICourse[]>((resolve, reject) => {
             const element = document.createElement("input");
             element.type = "file";
             element.accept = "application/json";
-            element.onchange = () => {
+            element.multiple = true;
+            element.onchange = async () => {
                 if (!element.files) {
                     reject(new Error("No file selected"));
                     return;
                 }
 
-                const file = element.files[0];
-                const reader = new FileReader();
-                reader.onload = () => {
-                    const result = reader.result as string;
-                    try {
-                        const course = JSON.parse(result);
-                        resolve(course);
-                    } catch (error) {
-                        reject(error);
-                    }
-                };
-                reader.readAsText(file);
+                const promises = [] as Promise<ICourse>[];
+                for (const file of Array.from(element.files)) {
+                    promises.push(
+                        new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                                const result = reader.result as string;
+                                try {
+                                    const course = JSON.parse(result);
+                                    resolve(course);
+                                } catch (error) {
+                                    reject(error);
+                                }
+                            };
+                            reader.readAsText(file);
+                        })
+                    );
+                }
+
+                resolve(await Promise.all(promises));
             };
             element.click();
         });
     };
 
     const addFromUpload = async () => {
-        const course = await uploadCourse();
-        addCourse(course);
+        const courses = await uploadCourses();
+        courses.map((x) => addCourse(x));
     };
 
     const moveQuestionUp = (course: ICourse, question: Question) => {

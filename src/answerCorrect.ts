@@ -1,4 +1,4 @@
-import { levenshtein } from "./levenshtein";
+import { levenshtein, safeEval } from "./helpers";
 import type { INumberAnswerQuestion, ITextAnswerQuestion } from "./quiz";
 
 export const checkTextAnswer = (question: ITextAnswerQuestion) => {
@@ -30,8 +30,7 @@ export const checkTextAnswer = (question: ITextAnswerQuestion) => {
     }
 
     if (question.solutionRegex) {
-        const regexFunction = new Function("return " + question.solutionRegex);
-        let regex = regexFunction();
+        let regex = safeEval(question.solutionRegex) as any;
         if (regex instanceof RegExp) {
             return regex.test(answer);
         }

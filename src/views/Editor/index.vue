@@ -266,6 +266,12 @@ const toggleCollapse = (questionId: string) => {
         display: grid;
         grid-template-columns: 200px 1fr;
         gap: 1em;
+        align-items: start;
+
+        & .meta {
+            position: sticky;
+            top: 1em;
+        }
     }
 }
 

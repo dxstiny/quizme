@@ -71,18 +71,3 @@ const importQuestions = () => {
         </div>
     </dialog>
 </template>
-<style scoped>
-dialog {
-    border-radius: 1em;
-    border: 2px solid var(--bg-base-lt);
-    background: var(--bg-base);
-    color: var(--fg-base);
-
-    .content {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1em;
-    }
-}
-</style>

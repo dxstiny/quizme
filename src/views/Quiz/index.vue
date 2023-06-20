@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import Question from "@/components/questions/index.vue";
 import IconButton from "@/components/IconButton.vue";
 import { useRouter, useRoute } from "vue-router";
@@ -13,11 +13,49 @@ const courses = useCourseStore();
 const statStore = useStatsStore();
 const courseId = ref(useRoute().params.id as string);
 
+const enterListener = (e: KeyboardEvent) => {
+    // has open dialog
+    if (
+        Array.from(document.body.querySelectorAll("dialog")).some((x) =>
+            x.hasAttribute("open")
+        )
+    )
+        return;
+
+    if (e.key === "Enter") {
+        if (e.target) {
+            const el = e.target as HTMLElement;
+            if (el.classList.contains("notes")) return;
+        }
+
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        if (showEnd()) {
+            router.push("/");
+            return;
+        }
+
+        if (checking.value) {
+            next();
+            return;
+        }
+
+        if (!answered.value) return;
+        check();
+    }
+};
+
 onMounted(() => {
     const route = useRoute();
     const id = route.params.id as string;
     courseId.value = id;
     currentQuestion.value = 0;
+
+    document.addEventListener("keydown", enterListener);
+});
+onUnmounted(() => {
+    document.removeEventListener("keydown", enterListener);
 });
 
 const run = ref({
@@ -195,18 +233,6 @@ const formattedRunTime = computed(() => {
     const ss = (seconds - minutes * 60).toString().padStart(2, "0");
 
     return `${minutes}:${ss}`;
-});
-
-document.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-        if (checking.value) {
-            next();
-            return;
-        }
-
-        if (!answered.value) return;
-        check();
-    }
 });
 
 let previousMistakesShown = ref(false);

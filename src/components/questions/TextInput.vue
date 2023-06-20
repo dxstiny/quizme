@@ -296,13 +296,6 @@ const tryoutCorrect = computed(() => {
     gap: 1em;
 }
 
-hr {
-    border: none;
-    border-top: 2px solid var(--bg-base-lt);
-    width: calc(100% - 2em);
-    margin: 1em;
-}
-
 .tryout,
 .levenshtein {
     margin-top: 1em;

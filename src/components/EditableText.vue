@@ -88,27 +88,6 @@ const autoResize = () => {
     }
 }
 
-textarea {
-    width: 100%;
-    height: 100%;
-    border: none;
-    background: none;
-    font-size: 1em;
-    font-weight: 900;
-    font-family: inherit;
-    color: inherit;
-    outline: none;
-    color: var(--fg-base);
-    resize: none;
-    margin: 0;
-
-    &::placeholder {
-        color: var(--fg-base-mute);
-        font-weight: 400;
-        font-style: italic;
-    }
-}
-
 .h1 textarea {
     font-size: 2rem;
     font-weight: 900;

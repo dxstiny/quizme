@@ -89,13 +89,6 @@ const settings = useSettingsStore();
     align-items: center;
 }
 
-hr {
-    border: 0;
-    height: 2px;
-    background: var(--bg-base-lt);
-    margin: 2em 0;
-}
-
 .label {
     display: flex;
     flex-direction: row;
