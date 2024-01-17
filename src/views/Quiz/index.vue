@@ -87,6 +87,10 @@ const answered = computed(() => {
         return Object.keys(solution).every((s) => answer[s] === solution[s]);
     }
 
+    if (question.type == "fill-in-the-blank") {
+        return true;
+    }
+
     return quiz.value.questions[currentQuestion.value]?.answer != null;
 });
 const hasTip = computed(() => {
@@ -108,9 +112,9 @@ const correct = () => {
         return solution.every((s) => answer.includes(s));
     }
 
-    if (activeQuestion.value.type == "ordering") {
-        const solution = activeQuestion.value.solution || [];
-        const answer = activeQuestion.value.answer || [];
+    if (["ordering", "fill-in-the-blank"].includes(activeQuestion.value.type)) {
+        const solution = (activeQuestion.value.solution || []) as string[];
+        const answer = (activeQuestion.value.answer || []) as string[];
         return solution.every((s, i) => s === answer[i]);
     }
 
@@ -169,6 +173,9 @@ const solutionText = computed(() => {
         return `${question.solution} (+/- ${question.delta})`;
     }
     if (question.type === "ordering") {
+        return question.solution.join(", ");
+    }
+    if (question.type === "fill-in-the-blank") {
         return question.solution.join(", ");
     }
 });

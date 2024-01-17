@@ -84,6 +84,25 @@ const selected = ref({
     right: null as null | number
 });
 
+const onEnter = (e: Event, index: number, side: "left" | "right") => {
+    if (!props.editable) {
+        select(index, side);
+        return;
+    }
+    const element = e.target as HTMLElement;
+    const areaChild = element.querySelector("div");
+    if (areaChild) {
+        // double click
+        const event = new MouseEvent("dblclick", {
+            view: window,
+            bubbles: true,
+            cancelable: true
+        });
+        areaChild.dispatchEvent(event);
+        return;
+    }
+};
+
 const select = (index: number, side: "left" | "right") => {
     if (props.disabled) return;
     if (props.editable) return;
@@ -155,7 +174,7 @@ const select = (index: number, side: "left" | "right") => {
                 <div
                     class="option"
                     v-for="side in ['left', 'right']"
-                    tabindex=0
+                    tabindex="0"
                     :class="{
                         // @ts-ignore
                         selected: !editable && selected[side] === index,
@@ -170,6 +189,7 @@ const select = (index: number, side: "left" | "right") => {
                     }"
                     @click="select(index, side as any)"
                     @keypress.space.stop="select(index, side as any)"
+                    @keypress.enter.prevent.stop="e => onEnter(e, index, side as any)"
                 >
                     <EditableText
                         :locked="!editable"

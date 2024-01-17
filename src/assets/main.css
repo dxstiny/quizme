@@ -51,7 +51,8 @@ h3 {
     text-decoration: line-through;
 }
 
-textarea {
+textarea,
+.textarea {
     width: 100%;
     height: 100%;
     border: none;

@@ -72,7 +72,7 @@ const autoResize = () => {
             @change="update(($event.target as HTMLInputElement).value)"
             @input="autoResize()"
             @click.stop="editing = true"
-            @keydown.enter="editing = false"
+            @keydown.enter="editing = !editing"
             @keydown.esc="editing = false"
             @blur="editing = false"
             :placeholder="placeholder"

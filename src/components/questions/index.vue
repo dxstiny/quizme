@@ -10,6 +10,7 @@ import TextInput from "./TextInput.vue";
 import TrueFalse from "./TrueFalse.vue";
 import Ordering from "./Ordering.vue";
 import Flashcard from "./Flashcard.vue";
+import FillInTheBlank from "./FillInTheBlank.vue";
 
 defineProps({
     question: {
@@ -39,7 +40,7 @@ const component = {
     "true-false": TrueFalse,
     ordering: Ordering,
     flashcard: Flashcard,
-    "fill-in-the-blank": TextInput
+    "fill-in-the-blank": FillInTheBlank
 };
 </script>
 <template>

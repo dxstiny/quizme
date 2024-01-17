@@ -117,10 +117,10 @@ export const TYPE_OPTIONS = [
         label: "True/False",
         value: "true-false"
     },
-    /*{
+    {
         label: "Fill in the Blank",
         value: "fill-in-the-blank"
-    },*/
+    },
     {
         label: "Matching",
         value: "matching"

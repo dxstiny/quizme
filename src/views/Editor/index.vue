@@ -55,6 +55,8 @@ const changeQuestionType = (question: IQuestion, to: string) => {
         (question as IMultipleAnswerQuestion).solution = [];
     } else if (to === "ordering") {
         question.solution = [];
+    } else if (to === "fill-in-the-blank") {
+        question.solution = [];
     } else if (to === "matching") {
         question.solution = {};
     } else {
