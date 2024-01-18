@@ -66,7 +66,7 @@ const revealed = ref(false);
                 <p class="muted">Click to reveal</p>
             </div>
             <h3 class="placeholder">
-                {{ "m".repeat(question.solution.length) }}
+                {{ "m ".repeat(question.solution.length / 2) }}
             </h3>
         </div>
     </div>
@@ -102,6 +102,8 @@ const revealed = ref(false);
     .front,
     .back {
         position: absolute;
+        inset: 1em;
+
         -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
     }
