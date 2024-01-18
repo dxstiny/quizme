@@ -22,7 +22,7 @@ const enterListener = (e: KeyboardEvent) => {
     )
         return;
 
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !e.shiftKey) {
         if (e.target) {
             const el = e.target as HTMLElement;
             if (el.classList.contains("notes")) return;

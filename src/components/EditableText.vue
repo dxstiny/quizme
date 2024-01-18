@@ -59,10 +59,10 @@ const autoResize = () => {
 };
 
 const onEnter = (e: KeyboardEvent) => {
+    console.log(e);
+
     // is shift pressed?
     if (e.shiftKey) {
-        value.value += "\n";
-        autoResize();
         return;
     }
 
@@ -93,6 +93,8 @@ const onEnter = (e: KeyboardEvent) => {
 </template>
 <style scoped>
 .editable-text {
+    white-space: pre-wrap;
+
     &.outlined {
         border: 2px solid var(--bg-base-lt);
         border-radius: 0.5em;

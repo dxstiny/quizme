@@ -84,11 +84,18 @@ const selected = ref({
     right: null as null | number
 });
 
-const onEnter = (e: Event, index: number, side: "left" | "right") => {
+const onEnter = (e: KeyboardEvent, index: number, side: "left" | "right") => {
     if (!props.editable) {
         select(index, side);
         return;
     }
+
+    if (e.shiftKey) {
+        return;
+    }
+
+    e.preventDefault();
+
     const element = e.target as HTMLElement;
     const areaChild = element.querySelector("div");
     if (areaChild) {
@@ -189,7 +196,7 @@ const select = (index: number, side: "left" | "right") => {
                     }"
                     @click="select(index, side as any)"
                     @keypress.space.stop="select(index, side as any)"
-                    @keypress.enter.prevent.stop="e => onEnter(e, index, side as any)"
+                    @keypress.enter="e => onEnter(e, index, side as any)"
                 >
                     <EditableText
                         :locked="!editable"
@@ -286,7 +293,7 @@ const select = (index: number, side: "left" | "right") => {
     }
 
     .option span {
-        white-space: pre;
+        white-space: pre-wrap;
     }
 
     .option {
