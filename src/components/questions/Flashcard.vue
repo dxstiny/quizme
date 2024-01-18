@@ -110,7 +110,6 @@ watch(
     .front,
     .back {
         position: absolute;
-        inset: 1em;
 
         -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
@@ -118,6 +117,7 @@ watch(
 
     .back {
         transform: rotateY(180deg);
+        inset: 1em;
     }
 }
 </style>
