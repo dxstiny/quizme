@@ -19,6 +19,13 @@ const props = defineProps({
 });
 
 const revealed = ref(false);
+
+watch(
+    () => props.question.id,
+    () => {
+        revealed.value = false;
+    }
+);
 </script>
 <template>
     <div class="question multiple-choice">
@@ -84,8 +91,8 @@ const revealed = ref(false);
     padding: 1rem;
     transition: all 0.5s ease-in-out;
     cursor: pointer;
-    transition: transform 0.5s;
     transform-style: preserve-3d;
+    transition: none;
 
     .placeholder {
         color: transparent;
@@ -97,6 +104,7 @@ const revealed = ref(false);
 
     &.revealed {
         transform: rotateY(180deg);
+        transition: transform 0.5s;
     }
 
     .front,
