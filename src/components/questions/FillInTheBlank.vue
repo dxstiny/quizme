@@ -31,8 +31,9 @@ const findAllGaps = () => {
     return Array.from(gaps).map((gap) => gap.value);
 };
 
-const generateQuiz = (text: string) => {
+const generateQuiz = (text: string | undefined) => {
     if (!quiz.value) return;
+    if (!text) return;
 
     // replace --[.*]-- with <span class="gap">(*)</span>
     const regex = /-\[(.*)\]-/g;
@@ -75,18 +76,17 @@ const generateQuiz = (text: string) => {
 };
 
 onMounted(() => {
-    if (!props.editable) {
-        generateQuiz(props.question.question);
-    } else {
-        editor.value!.innerHTML = props.question.question;
-        generateQuiz(props.question.question);
+    if (props.editable) {
+        editor.value!.innerHTML = props.question.text;
     }
+
+    generateQuiz(props.question.text);
 });
 
 const onFocusOut = () => {
     if (!editor.value) return;
     generateQuiz(editor.value.innerHTML);
-    props.question.question = editor.value.innerHTML;
+    props.question.text = editor.value.innerHTML;
     props.question.solution = allGaps.value;
     console.log(props.question);
 };
@@ -107,6 +107,14 @@ const insertGap = () => {
                 <h1>
                     {{ question.title }}
                 </h1>
+            </EditableText>
+            <EditableText
+                :locked="!editable"
+                v-model="question.question"
+            >
+                <p>
+                    {{ question.question }}
+                </p>
             </EditableText>
         </div>
         <div

@@ -285,6 +285,10 @@ const select = (index: number, side: "left" | "right") => {
         }
     }
 
+    .option span {
+        white-space: pre;
+    }
+
     .option {
         &.correct {
             animation: correct 1s ease-in-out forwards;

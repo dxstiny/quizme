@@ -75,6 +75,7 @@ export interface ITrueFalseQuestion extends IQuestion {
 
 export interface IFillInTheBlankQuestion extends IQuestion {
     type: "fill-in-the-blank";
+    text: string;
     solution: string[];
     answer?: string[];
 }

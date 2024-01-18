@@ -57,6 +57,18 @@ const autoResize = () => {
     area.value.style.height = "auto";
     area.value.style.height = area.value.scrollHeight + "px";
 };
+
+const onEnter = (e: KeyboardEvent) => {
+    // is shift pressed?
+    if (e.shiftKey) {
+        value.value += "\n";
+        autoResize();
+        return;
+    }
+
+    e.preventDefault();
+    editing.value = !editing.value;
+};
 </script>
 <template>
     <div
@@ -72,7 +84,7 @@ const autoResize = () => {
             @change="update(($event.target as HTMLInputElement).value)"
             @input="autoResize()"
             @click.stop="editing = true"
-            @keydown.enter="editing = !editing"
+            @keydown.enter="onEnter"
             @keydown.esc="editing = false"
             @blur="editing = false"
             :placeholder="placeholder"
