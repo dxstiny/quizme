@@ -98,7 +98,11 @@ watch(
                         <span
                             v-if="editable"
                             class="material-symbols-rounded delete"
+                            tabindex="0"
                             @click.stop="
+                                props.question.solution.splice(index, 1)
+                            "
+                            @keypress.enter.stop="
                                 props.question.solution.splice(index, 1)
                             "
                         >
@@ -110,7 +114,9 @@ watch(
             <div
                 v-if="editable"
                 class="option add"
+                tabindex="0"
                 @click.stop="props.question.solution.push('Item')"
+                @keypress.enter.stop="props.question.solution.push('Item')"
             >
                 <span class="material-symbols-rounded add"> add </span>
                 Add

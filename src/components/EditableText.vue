@@ -36,6 +36,7 @@ const startEditing = () => {
 
     nextTick(() => {
         if (!area.value) return;
+        autoResize();
         area.value.focus();
     });
 };
@@ -59,8 +60,6 @@ const autoResize = () => {
 };
 
 const onEnter = (e: KeyboardEvent) => {
-    console.log(e);
-
     // is shift pressed?
     if (e.shiftKey) {
         return;

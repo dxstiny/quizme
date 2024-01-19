@@ -213,7 +213,11 @@ const select = (index: number, side: "left" | "right") => {
                 <span
                     v-if="editable"
                     class="material-symbols-rounded delete"
+                    tabindex="0"
                     @click.stop="delete props.question.solution[option]"
+                    @keypress.enter.stop="
+                        delete props.question.solution[option]
+                    "
                 >
                     delete
                 </span>
@@ -221,7 +225,9 @@ const select = (index: number, side: "left" | "right") => {
             <div
                 v-if="editable"
                 class="option add"
+                tabindex="0"
                 @click.stop="props.question.solution['A'] = 'B'"
+                @keypress.enter="props.question.solution['A'] = 'B'"
             >
                 <span class="material-symbols-rounded add"> add </span>
                 Add
@@ -292,7 +298,7 @@ const select = (index: number, side: "left" | "right") => {
         }
     }
 
-    .option span {
+    .option span:not(.material-symbols-rounded) {
         white-space: pre-wrap;
     }
 
