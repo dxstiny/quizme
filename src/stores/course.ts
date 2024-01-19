@@ -2,6 +2,7 @@ import { ref, watch } from "vue";
 import { defineStore } from "pinia";
 import { generateQuiz, type ICourse } from "@/course";
 import type { Question } from "@/quiz";
+import gistClient from "@/helper/gistClient";
 
 const STORAGE_KEY = "quizme.courses";
 
@@ -88,6 +89,26 @@ export const useCourseStore = defineStore("course", () => {
         });
     };
 
+    const shareCourse = async (course: ICourse, asPublic: boolean = false) => {
+        const name = `${course.title}.qm`;
+        const jdata = await gistClient.save(
+            { [name]: course },
+            course.title,
+            course.description,
+            asPublic
+        );
+        const file = jdata.files[name];
+        const rawUrl = file.raw_url;
+        // "https://gist.githubusercontent.com/{user}/{gist}/raw/{file}/{filename}"
+        // gist:{user}:{gist}:{filename}
+        const gistId = jdata.id;
+        const user = jdata.owner.login;
+        const sha = rawUrl.split("/raw/")[1].split("/")[0];
+        const gistUrl = `gist:${user}:${gistId}:${sha}`;
+        const base64 = btoa(gistUrl);
+        return `https://dxstiny.github.io/quizme/#/s/${base64}`;
+    };
+
     const addFromUpload = async () => {
         const courses = await uploadCourses();
         courses.map((x) => addCourse(x));
@@ -171,6 +192,7 @@ export const useCourseStore = defineStore("course", () => {
         onCorrectQuestion,
         onIncorrectQuestion,
         progress,
-        resetProgress
+        resetProgress,
+        shareCourse
     };
 });

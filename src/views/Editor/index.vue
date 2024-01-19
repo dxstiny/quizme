@@ -13,6 +13,7 @@ import {
 } from "@/quiz";
 import WithSidebar from "../WithSidebar.vue";
 import { ref } from "vue";
+import ShareModal from "./ShareModal.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -81,6 +82,7 @@ const toggleCollapse = (questionId: string) => {
 </script>
 <template>
     <WithSidebar>
+        <ShareModal ref="shareModal" />
         <div class="wrap">
             <div class="editor">
                 <div
@@ -120,6 +122,15 @@ const toggleCollapse = (questionId: string) => {
                             icon="file_download"
                             label="Download"
                             @click="store.downloadCourse(course)"
+                        />
+                        <IconButton
+                            icon="file_upload"
+                            label="Share"
+                            @click="
+                                ($refs.shareModal as typeof ShareModal).open(
+                                    course
+                                )
+                            "
                         />
                         <IconButton
                             icon="school"

@@ -54,6 +54,7 @@ watch(
             :locked="false"
             v-model="question.solution"
             @click.stop
+            placeholder="Click to edit the solution"
         >
             <h3>
                 {{ question.solution }}
