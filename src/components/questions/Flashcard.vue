@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import EditableText from "../EditableText.vue";
-import { type PropType, ref, watch } from "vue";
+import { type PropType, ref, watch, computed } from "vue";
 import type { IFlashcard } from "../../quiz";
 
 const props = defineProps({
@@ -26,6 +26,13 @@ watch(
         revealed.value = false;
     }
 );
+
+const placeholder = computed(() => {
+    // replace all characters with m with a regex
+    const placeholder = props.question.solution.replace(/./g, "m");
+    console.log(placeholder);
+    return placeholder;
+});
 </script>
 <template>
     <div class="question multiple-choice">
@@ -74,7 +81,7 @@ watch(
                 <p class="muted">Click to reveal</p>
             </div>
             <h3 class="placeholder">
-                {{ "m ".repeat(question.solution.length / 2) }}
+                {{ placeholder }}
             </h3>
         </div>
     </div>
@@ -114,6 +121,11 @@ watch(
 
         -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
+    }
+
+    .back,
+    h3 {
+        white-space: pre-wrap;
     }
 
     .back {
