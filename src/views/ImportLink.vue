@@ -10,6 +10,9 @@ import IconButton from "../components/IconButton.vue";
 import type { ICourse } from "@/course";
 import { useCourseStore } from "@/stores/course";
 import WithSidebar from "./WithSidebar.vue";
+import gistClient from "@/helper/gistClient";
+
+type Error = null | "not-found" | "not-allowed";
 
 const route = useRoute();
 const router = useRouter();
@@ -17,6 +20,8 @@ const courses = useCourseStore();
 
 const who = ref("");
 const what = ref<ICourse[]>([]);
+const error = ref<Error>(null);
+const githubPat = ref("");
 
 onMounted(async () => {
     const base64 = route.params.id as string;
@@ -28,6 +33,15 @@ onMounted(async () => {
         const url = `https://gist.githubusercontent.com/${user}/${gist}/raw/${file}`;
 
         const res = await fetch(url);
+
+        if (res.status == 404) {
+            error.value = "not-found";
+            return;
+        } else if (res.status == 403) {
+            error.value = "not-allowed";
+            return;
+        }
+
         const jdata = await res.json();
 
         what.value = [jdata];
@@ -39,19 +53,40 @@ const confirm = async () => {
     await courses.addCourse(what.value[0]);
     router.push(`/courses/${what.value[0].id}`);
 };
+
+const createNewCourse = () => {
+    const id = Math.random().toString(36).substring(7);
+    courses.addCourse({
+        title: "New Course",
+        description: "",
+        questions: [],
+        id
+    });
+    router.push(`/courses/${id}`);
+};
+
+const tryAgain = () => {
+    gistClient.setPat(githubPat.value);
+    window.location.reload();
+};
 </script>
 <template>
     <WithSidebar>
         <div class="wrap">
-            <div class="flex-col">
-                <strong>{{ who }}</strong> wants to share:
+            <div
+                v-if="error == null"
+                class="flex-col"
+            >
+                <span>
+                    <strong>{{ who }}</strong> wants to share:
+                </span>
                 <span
                     v-if="what.length == 0"
                     class="text-muted italic text-sm"
                     >Nothing</span
                 >
                 <div
-                    class="p-4 mt-4 w-max flex flex-col gap-4"
+                    class="mt-4 w-max flex flex-col gap-4"
                     v-else
                 >
                     <div class="items">
@@ -60,11 +95,13 @@ const confirm = async () => {
                             class="card flex gap-2 items-center"
                         >
                             <div class="flex flex-col">
-                                <h4>{{ item.title }}</h4>
-                                <span class="text-muted uppercase text-sm">
+                                <h1>{{ item.title }}</h1>
+                                <span class="text-muted">
                                     {{ item.description }}
                                 </span>
-                                <span class="text-muted italic">
+                                <span
+                                    class="mt-4 text-muted text-sm uppercase italic"
+                                >
                                     {{ item.questions.length }} questions
                                 </span>
                             </div>
@@ -86,6 +123,57 @@ const confirm = async () => {
                     </div>
                 </div>
             </div>
+            <div
+                v-else-if="error == 'not-found'"
+                class="error flex-col"
+            >
+                <h1>Guess you'll have to create it yourself...</h1>
+                <p>
+                    No course was found at the link you provided. The course may
+                    have been deleted or the link may be incorrect.
+                </p>
+                <div class="flex gap-2">
+                    <IconButton
+                        type="action-green"
+                        icon="add"
+                        label="Create New Course"
+                        @click="createNewCourse"
+                    />
+                    <IconButton
+                        icon="home"
+                        label="Home"
+                        @click="router.push('/')"
+                    />
+                </div>
+            </div>
+            <div
+                v-else-if="error == 'not-allowed'"
+                class="error flex-col"
+            >
+                <h1>Not Allowed</h1>
+                <p>You don't have permission to view this course.</p>
+                <div class="card">
+                    <p>Wait, this is my Gist!</p>
+                    <input
+                        type="text"
+                        :value="githubPat"
+                        placeholder="Enter your GitHub PAT here"
+                    />
+                    <IconButton
+                        type="action-green"
+                        icon="check"
+                        label="Accept"
+                        @click="tryAgain"
+                        :disabled="!githubPat.length"
+                    />
+                </div>
+                <IconButton
+                    type="action-red"
+                    icon="close"
+                    label="Close"
+                    @click="router.push('/')"
+                />
+            </div>
         </div>
     </WithSidebar>
 </template>
@@ -98,6 +186,16 @@ const confirm = async () => {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    & > div.error {
+        padding: 0 1em;
+        width: calc(100% - 2em);
+
+        @media screen and (min-width: 1080px) {
+            max-width: 1080px;
+            padding: 0;
+        }
+    }
 }
 
 .items {
@@ -114,7 +212,6 @@ const confirm = async () => {
     gap: 0.5rem;
     justify-content: center;
 }
-
 .text-muted {
     color: var(--fg-base-mute);
 }
