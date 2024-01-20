@@ -348,4 +348,14 @@ const toggleCollapse = (questionId: string) => {
         }
     }
 }
+
+@media screen and (max-width: 768px) {
+    .editor {
+        grid-template-columns: 1fr !important;
+    }
+
+    .questions {
+        display: none;
+    }
+}
 </style>

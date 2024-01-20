@@ -211,6 +211,8 @@ const tryAgain = () => {
     flex-direction: column;
     gap: 0.5rem;
     justify-content: center;
+    overflow: hidden;
+    width: calc(100% - 2em);
 }
 .text-muted {
     color: var(--fg-base-mute);
@@ -234,6 +236,10 @@ const tryAgain = () => {
 
 .w-max {
     width: max-content;
+
+    @media screen and (max-width: 768px) {
+        width: unset;
+    }
 }
 
 .flex-col {
