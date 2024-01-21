@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import EditableText from "../EditableText.vue";
 import { type IOrderingQuestion } from "../../quiz";
-import { type PropType, watch, ref } from "vue";
+import { type PropType, watch, ref, onMounted } from "vue";
 import draggable from "vuedraggable";
 
 const props = defineProps({
@@ -36,7 +36,6 @@ const randomise = () => {
     props.question.answer = solution.sort(() => Math.random() - 0.5);
     display.value = props.question.answer;
 };
-randomise();
 watch(
     display,
     () => {
@@ -50,6 +49,8 @@ watch(
         deep: true
     }
 );
+watch(() => props.question.id, randomise);
+onMounted(randomise);
 </script>
 <template>
     <div class="question multiple-choice">
