@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import EditableText from "../EditableText.vue";
 import type { IFillInTheBlankQuestion } from "@/quiz";
-import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import { ref, type PropType, onMounted } from "vue";
 import IconButton from "../IconButton.vue";
 
