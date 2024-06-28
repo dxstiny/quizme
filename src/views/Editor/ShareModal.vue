@@ -46,28 +46,21 @@ const save = async () => {
         courseCopy.score = {};
     }
 
-    shareUrl.value = await courses.shareCourse(courseCopy, publicGist.value);
+    shareUrl.value = await courses.shareCourse(courseCopy, publicGist.value) ?? "";
 };
 
 defineExpose({ open });
 </script>
 <template>
     <dialog ref="dialog">
-        <span
-            class="material-symbols-rounded close"
-            @click="dialog?.close()"
-        >
+        <span class="material-symbols-rounded close" @click="dialog?.close()">
             close
         </span>
         <template v-if="patSet && sharingCourse">
             <h1>Share "{{ sharingCourse.title }}"</h1>
             <div v-if="shareUrl">
                 <p>Your share link:</p>
-                <input
-                    type="text"
-                    readonly
-                    :value="shareUrl"
-                />
+                <input type="text" readonly :value="shareUrl" />
             </div>
             <div v-else>
                 <p>
@@ -75,21 +68,10 @@ defineExpose({ open });
                     create a gist on GitHub with the course data.
                 </p>
                 <div class="options">
-                    <Switch
-                        label="Include Progress"
-                        v-model="includeProgress"
-                    />
-                    <Switch
-                        label="Public Gist"
-                        v-model="publicGist"
-                    />
+                    <Switch label="Include Progress" v-model="includeProgress" />
+                    <Switch label="Public Gist" v-model="publicGist" />
                 </div>
-                <IconButton
-                    type="action-green"
-                    icon="share"
-                    label="Share"
-                    @click="save"
-                />
+                <IconButton type="action-green" icon="share" label="Share" @click="save" />
             </div>
         </template>
         <template v-else>
@@ -98,18 +80,8 @@ defineExpose({ open });
                 To use this feature, you need to provide a GitHub Gists PAT.
                 This is used to create gists for sharing courses.
             </p>
-            <input
-                type="text"
-                v-model="inputPat"
-                placeholder="Enter your PAT here"
-            />
-            <IconButton
-                type="action-green"
-                icon="done"
-                label="Save"
-                :disabled="!inputPat.length"
-                @click="setPat"
-            />
+            <input type="text" v-model="inputPat" placeholder="Enter your PAT here" />
+            <IconButton type="action-green" icon="done" label="Save" :disabled="!inputPat.length" @click="setPat" />
         </template>
     </dialog>
 </template>
@@ -127,7 +99,7 @@ dialog[open] {
 }
 
 dialog[open],
-dialog[open] > div {
+dialog[open]>div {
     outline: none;
     display: flex;
     flex-direction: column;
