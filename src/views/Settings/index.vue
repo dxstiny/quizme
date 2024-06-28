@@ -8,6 +8,13 @@ import WithSidebar from "../WithSidebar.vue";
 import ExpandedDropdown from "@/components/ExpandedDropdown.vue";
 
 const settings = useSettingsStore();
+
+const lengthLabel = (value: unknown) => {
+    if (value == -1) return "all";
+    if (value == -2) return "not yet mastered";
+
+    return value;
+};
 </script>
 <template>
     <WithSidebar>
@@ -16,18 +23,13 @@ const settings = useSettingsStore();
                 <div class="main">
                     <h1>Settings</h1>
                     <h2>Quiz Length</h2>
-                    <ExpandedDropdown
-                        :options="defaultLength"
-                        v-model="settings.settings.defaultLength"
-                    >
+                    <ExpandedDropdown :options="defaultLength" v-model="settings.settings.defaultLength">
                         <template #label="{ option }">
                             <div class="label">
                                 <h3>{{ option.label }}</h3>
                                 <p>
                                     {{
-                                        option.value == -1
-                                            ? "all"
-                                            : option.value
+                                        lengthLabel(option.value)
                                     }}
                                     questions
                                 </p>
@@ -36,10 +38,7 @@ const settings = useSettingsStore();
                     </ExpandedDropdown>
                     <hr />
                     <h2>Quest Difficulty</h2>
-                    <ExpandedDropdown
-                        :options="questDifficulty"
-                        v-model="settings.settings.questDifficulty"
-                    >
+                    <ExpandedDropdown :options="questDifficulty" v-model="settings.settings.questDifficulty">
                         <template #label="{ option }">
                             <div class="label">
                                 <h3>{{ option.label }}</h3>
@@ -52,20 +51,16 @@ const settings = useSettingsStore();
                         <h2>About you</h2>
                         <p class="muted">
                             We want to
-                            <span class="strikethrough"
-                                >sell your data to facebook </span
-                            >personalise the UI for you, to make you feel at
+                            <span class="strikethrough">sell your data to facebook </span>personalise the UI for you, to
+                            make you feel
+                            at
                             home!
                         </p>
                         <div class="input">
                             <span class="material-symbols-rounded">
                                 person
                             </span>
-                            <input
-                                v-model="settings.settings.username"
-                                type="text"
-                                placeholder="Your name"
-                            />
+                            <input v-model="settings.settings.username" type="text" placeholder="Your name" />
                         </div>
                     </div>
                 </div>
@@ -75,6 +70,7 @@ const settings = useSettingsStore();
 </template>
 <style scoped>
 @import "@/components/questions/common.css";
+
 .input {
     display: flex;
     align-items: center;
@@ -131,7 +127,7 @@ const settings = useSettingsStore();
     border-radius: 1em;
     border: 2px solid var(--bg-base-lt);
 
-    > * {
+    >* {
         margin: 1em;
     }
 

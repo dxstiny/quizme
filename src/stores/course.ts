@@ -1,8 +1,9 @@
 import { ref, watch } from "vue";
 import { defineStore } from "pinia";
-import { generateQuiz, type ICourse } from "@/course";
+import { generateQuiz, type ICourse, type IRemote } from "@/course";
 import type { Question } from "@/quiz";
 import gistClient from "@/helper/gistClient";
+import { pull, push } from "@/helper/share";
 
 const STORAGE_KEY = "quizme.courses";
 
@@ -90,23 +91,12 @@ export const useCourseStore = defineStore("course", () => {
     };
 
     const shareCourse = async (course: ICourse, asPublic: boolean = false) => {
-        const name = `${course.title}.qm`;
-        const jdata = await gistClient.save(
-            { [name]: course },
-            course.title,
-            course.description,
-            asPublic
-        );
-        const file = jdata.files[name];
-        const rawUrl = file.raw_url;
-        // "https://gist.githubusercontent.com/{user}/{gist}/raw/{file}/{filename}"
-        // gist:{user}:{gist}:{filename}
-        const gistId = jdata.id;
-        const user = jdata.owner.login;
-        const sha = rawUrl.split("/raw/")[1].split("/")[0];
-        const gistUrl = `gist:${user}:${gistId}:${sha}`;
-        const base64 = btoa(gistUrl);
-        return `https://dxstiny.github.io/quizme/#/s/${base64}`;
+        const result = await push(course, asPublic);
+        if (result.course) {
+            courses.value.find((x) => x.id === course.id)!.remote =
+                result.course.remote;
+        }
+        return result.link;
     };
 
     const addFromUpload = async () => {
@@ -179,6 +169,35 @@ export const useCourseStore = defineStore("course", () => {
         course.score = {};
     };
 
+    const pullFromRemote = async (options: {
+        course?: ICourse;
+        remote?: IRemote;
+    }) => {
+        const { course, remote } = options;
+
+        console.log("Pulling course", course, remote);
+        const pullSource =
+            remote?.identifier ?? course?.remote?.[0]?.identifier;
+
+        console.log("Pulling from", pullSource);
+
+        if (!pullSource) {
+            throw new Error("No remote source");
+        }
+
+        const newCourse = await pull(pullSource);
+        if (newCourse.error) {
+            throw new Error(newCourse.error);
+        }
+
+        if (course) {
+            course.title = newCourse.course.title;
+            course.description = newCourse.course.description;
+            course.questions = newCourse.course.questions;
+            return course;
+        }
+    };
+
     return {
         courses,
         addCourse,
@@ -193,6 +212,7 @@ export const useCourseStore = defineStore("course", () => {
         onIncorrectQuestion,
         progress,
         resetProgress,
-        shareCourse
+        shareCourse,
+        pull: pullFromRemote
     };
 });

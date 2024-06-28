@@ -60,16 +60,6 @@ const save = async (
     }
 
     const jdata = await res.json();
-    if (!isPublic && jdata.id) {
-        await fetch("/api/config", {
-            method: "PUT",
-            body: JSON.stringify({
-                github: {
-                    gistId: jdata.id
-                }
-            })
-        });
-    }
     return jdata;
 };
 

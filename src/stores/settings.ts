@@ -30,7 +30,7 @@ export const defaultLength = [
         value: 5
     },
     {
-        label: "Standard",
+        label: "Casual",
         value: 15
     },
     {
@@ -40,6 +40,10 @@ export const defaultLength = [
     {
         label: "Marathon",
         value: -1
+    },
+    {
+        label: "Redemption",
+        value: -2
     }
 ];
 

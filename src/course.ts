@@ -2,8 +2,13 @@ import type { IQuiz, Question } from "./quiz";
 import { useCourseStore } from "./stores/course";
 import { useSettingsStore } from "./stores/settings";
 
+export interface IRemote {
+    identifier: string;
+}
+
 export interface ICourse extends IQuiz {
     score?: Record<string, number>; // [questionId, count]
+    remote?: IRemote[];
 }
 
 const pickQuestion = (
@@ -59,13 +64,22 @@ export const generateQuiz = (
     console.log("Generating quiz", course, length);
 
     const quiz = JSON.parse(JSON.stringify(course)) as IQuiz;
+    let questions = course.questions;
 
-    let weightedQuestions = weightQuestions(course, quiz.questions);
+    if (length == -2) {
+        // filter out mastered questions
+        questions = questions.filter((q) => (course.score?.[q.id] ?? 0) < 2);
+        if (!questions.length) {
+            questions = course.questions;
+        }
+    }
+
+    let weightedQuestions = weightQuestions(course, questions);
     quiz.questions = [];
 
     for (
         let i = 0;
-        weightedQuestions.length && (i < length || length == -1);
+        weightedQuestions.length && (i < length || length < 0);
         i++
     ) {
         const pick = pickQuestion(weightedQuestions);
