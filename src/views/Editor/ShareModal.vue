@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import gistClient from "../../helper/gistClient";
 import IconButton from "@/components/IconButton.vue";
 import type { ICourse } from "@/course";
@@ -11,6 +11,9 @@ const shareUrl = ref("");
 const includeProgress = ref(false);
 const publicGist = ref(false);
 const sharingCourse = ref<ICourse>();
+
+const action = ref<null | "gist">(null);
+
 const courses = useCourseStore();
 
 const inputPat = ref("");
@@ -22,6 +25,7 @@ onMounted(() => {
 });
 
 const open = (course: ICourse) => {
+    action.value = null;
     dialog.value?.showModal();
     if (course.id !== sharingCourse.value?.id) {
         includeProgress.value = false;
@@ -44,10 +48,40 @@ const save = async () => {
 
     if (!includeProgress.value) {
         courseCopy.score = {};
+        delete courseCopy.remote;
     }
 
     shareUrl.value = await courses.shareCourse(courseCopy, publicGist.value) ?? "";
 };
+
+const download = () => {
+    courses.downloadCourse(sharingCourse.value!);
+    dialog.value?.close();
+}
+
+const update = () => {
+    const course = sharingCourse.value;
+    if (!course) return;
+
+    const courseCopy: ICourse = JSON.parse(JSON.stringify(course));
+
+    if (!includeProgress.value) {
+        courseCopy.score = {};
+        delete courseCopy.remote;
+    }
+
+    gistClient.update(courseCopy, course.remote![0].identifier);
+
+    dialog.value?.close();
+};
+
+const canUpdate = computed(() => {
+    if (!sharingCourse.value?.remote?.length) return false;
+
+    const identifier = sharingCourse.value.remote[0].identifier;
+
+    return gistClient.isMine(identifier);
+});
 
 defineExpose({ open });
 </script>
@@ -56,7 +90,61 @@ defineExpose({ open });
         <span class="material-symbols-rounded close" @click="dialog?.close()">
             close
         </span>
-        <template v-if="patSet && sharingCourse">
+        <template v-if="!action && sharingCourse">
+            <h1>Share "{{ sharingCourse.title }}"</h1>
+            <div class="options">
+                <div class="option" v-if="canUpdate">
+                    <div class="info">
+                        <h3>Update remote</h3>
+                        <p>
+                            This course is already shared. Update the remote to
+                            share the latest changes.
+                        </p>
+                    </div>
+                    <IconButton type="action-green" icon="update" label="Update" @click="update" />
+                </div>
+                <div class="option">
+                    <div class="info">
+                        <h3>New share</h3>
+                        <p>
+                            Share this course for the first time. This will create
+                            a new gist on GitHub.
+                        </p>
+                    </div>
+                    <IconButton type="action-green" icon="share" label="Share" @click="action = 'new'" />
+                </div>
+                <div class="option">
+                    <div class="info">
+                        <h3>Download</h3>
+                        <p>
+                            Download the course as a JSON file. This can be used
+                            to import the course on another device.
+                        </p>
+                    </div>
+                    <IconButton type="action-green" icon="download" label="Download" @click="download" />
+                </div>
+            </div>
+        </template>
+        <template v-else-if="!patSet && action">
+            <h1>GitHub Gists PAT</h1>
+            <p>
+                To use this feature, you need to provide a GitHub Gists PAT.
+                This is used to create gists for sharing courses.
+            </p>
+            <input type="text" v-model="inputPat" placeholder="Enter your PAT here" />
+            <IconButton type="action-green" icon="done" label="Save" :disabled="!inputPat.length" @click="setPat" />
+        </template>
+        <template v-else-if="action == 'update'">
+            <h1>Share "{{ sharingCourse.title }}"</h1>
+            <div v-if="shareUrl">
+                <p>Your share link:</p>
+                <input type="text" readonly :value="shareUrl" />
+            </div>
+            <div v-else>
+                <IconButton type="action-green" icon="share" label="Update" @click="save" />
+            </div>
+        </template>
+        <template v-else-if="action == 'new'">
             <h1>Share "{{ sharingCourse.title }}"</h1>
             <div v-if="shareUrl">
                 <p>Your share link:</p>
@@ -73,15 +161,6 @@ defineExpose({ open });
                 </div>
                 <IconButton type="action-green" icon="share" label="Share" @click="save" />
             </div>
-        </template>
-        <template v-else>
-            <h1>GitHub Gists PAT</h1>
-            <p>
-                To use this feature, you need to provide a GitHub Gists PAT.
-                This is used to create gists for sharing courses.
-            </p>
-            <input type="text" v-model="inputPat" placeholder="Enter your PAT here" />
-            <IconButton type="action-green" icon="done" label="Save" :disabled="!inputPat.length" @click="setPat" />
         </template>
     </dialog>
 </template>
@@ -121,5 +200,18 @@ dialog::backdrop {
     display: flex;
     flex-direction: row;
     gap: 1em;
+
+    .option {
+        display: grid;
+        grid-template-columns: 1fr 20ch;
+        gap: 1em;
+        align-items: center;
+        border: none;
+        border-radius: 0;
+
+        &:not(:last-child) {
+            border-bottom: 2px solid var(--bg-base-lt);
+        }
+    }
 }
 </style>

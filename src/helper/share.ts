@@ -20,8 +20,8 @@ interface IImportError extends IImportResult {
 
 export type Import = IImportSuccess | IImportError;
 
-export const toShare = (mode: "gist", tag: string) => {
-    const gistUrl = `${mode}:${tag}`;
+export const toShare = (mode: "gist", author: string, tag: string) => {
+    const gistUrl = `${mode}:${author}:${tag}`;
     const base64 = btoa(gistUrl);
     return {
         link: `https://dxstiny.github.io/quizme/#/s/${base64}`,
@@ -31,10 +31,11 @@ export const toShare = (mode: "gist", tag: string) => {
 
 export const fromShare = (identifier: string) => {
     const str = atob(identifier);
-    const [mode, ...data] = str.split(":");
+    const [mode, author, ...data] = str.split(":");
 
     return {
         mode,
+        author,
         tag: data.join(":")
     };
 };
@@ -55,7 +56,7 @@ export const push = async (course: ICourse, asPublic: boolean = false) => {
     const user = jdata.owner.login;
     const sha = rawUrl.split("/raw/")[1].split("/")[0];
 
-    const { identifier, link } = toShare("gist", `${user}:${gistId}:${sha}`);
+    const { identifier, link } = toShare("gist", user, `${gistId}:${sha}`);
 
     course.remote ??= [];
     course.remote.push({
@@ -84,7 +85,7 @@ export const pull = async (identifier: string) => {
         return {
             author: user,
             course: jdata,
-            link: toShare(mode, tag).link
+            link: toShare(mode, user, tag).link
         } as Import;
     }
     return { error: "not-found" } as Import;
