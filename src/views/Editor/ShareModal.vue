@@ -111,7 +111,7 @@ defineExpose({ open });
                             a new gist on GitHub.
                         </p>
                     </div>
-                    <IconButton type="action-green" icon="share" label="Share" @click="action = 'new'" />
+                    <IconButton type="action-green" icon="share" label="Share" @click="action = 'gist'" />
                 </div>
                 <div class="option">
                     <div class="info">
@@ -134,17 +134,7 @@ defineExpose({ open });
             <input type="text" v-model="inputPat" placeholder="Enter your PAT here" />
             <IconButton type="action-green" icon="done" label="Save" :disabled="!inputPat.length" @click="setPat" />
         </template>
-        <template v-else-if="action == 'update'">
-            <h1>Share "{{ sharingCourse.title }}"</h1>
-            <div v-if="shareUrl">
-                <p>Your share link:</p>
-                <input type="text" readonly :value="shareUrl" />
-            </div>
-            <div v-else>
-                <IconButton type="action-green" icon="share" label="Update" @click="save" />
-            </div>
-        </template>
-        <template v-else-if="action == 'new'">
+        <template v-else-if="action == 'gist' && sharingCourse">
             <h1>Share "{{ sharingCourse.title }}"</h1>
             <div v-if="shareUrl">
                 <p>Your share link:</p>
