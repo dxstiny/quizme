@@ -67,10 +67,10 @@ export const push = async (course: ICourse, asPublic: boolean = false) => {
 };
 
 export const pull = async (identifier: string) => {
-    const { mode, tag } = fromShare(identifier);
+    const { mode, author, tag } = fromShare(identifier);
     if (mode === "gist") {
-        const [user, gist, file] = tag.split(":");
-        const url = `https://gist.githubusercontent.com/${user}/${gist}/raw/${file}`;
+        const [gist, file] = tag.split(":");
+        const url = `https://gist.githubusercontent.com/${author}/${gist}/raw/${file}`;
 
         const res = await fetch(url);
 
@@ -83,9 +83,9 @@ export const pull = async (identifier: string) => {
         const jdata = await res.json();
 
         return {
-            author: user,
+            author,
             course: jdata,
-            link: toShare(mode, user, tag).link
+            link: toShare(mode, author, tag).link
         } as Import;
     }
     return { error: "not-found" } as Import;
