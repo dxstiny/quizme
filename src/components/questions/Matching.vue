@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import EditableText from "../EditableText.vue";
 import { type IMatchingQuestion } from "../../quiz";
-import { type PropType, ref, watch, computed } from "vue";
+import { type PropType, ref, watch } from "vue";
+import Tag from "../Tag.vue";
 
 const props = defineProps({
     question: {
@@ -155,6 +156,11 @@ const select = (index: number, side: "left" | "right") => {
 <template>
     <div class="question multiple-choice">
         <div class="header">
+            <Tag
+                v-if="!editable"
+                label="Matching"
+                icon="signpost"
+            />
             <EditableText
                 :locked="!editable"
                 v-model="question.title"
@@ -196,7 +202,7 @@ const select = (index: number, side: "left" | "right") => {
                     }"
                     @click="select(index, side as any)"
                     @keypress.space.stop="select(index, side as any)"
-                    @keypress.enter="e => onEnter(e, index, side as any)"
+                    @keypress.enter="(e) => onEnter(e, index, side as any)"
                 >
                     <EditableText
                         :locked="!editable"

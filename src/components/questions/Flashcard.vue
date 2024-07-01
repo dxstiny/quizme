@@ -2,6 +2,7 @@
 import EditableText from "../EditableText.vue";
 import { type PropType, ref, watch, computed } from "vue";
 import type { IFlashcard } from "../../quiz";
+import Tag from "../Tag.vue";
 
 const props = defineProps({
     question: {
@@ -37,6 +38,11 @@ const placeholder = computed(() => {
 <template>
     <div class="question multiple-choice">
         <div class="header">
+            <Tag
+                v-if="!editable"
+                label="Flashcard"
+                icon="bolt"
+            />
             <EditableText
                 :locked="!editable"
                 v-model="question.title"

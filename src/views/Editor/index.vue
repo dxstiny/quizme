@@ -49,11 +49,22 @@ const changeQuestionType = (question: IQuestion, to: string) => {
     }
 
     if (to === "multiple-choice") {
-        (question as IMultipleChoiceQuestion).options = [];
-        (question as IMultipleChoiceQuestion).solution = -1;
+        if (currentType === "multiple-answer") {
+            (question as any as IMultipleChoiceQuestion).solution =
+                question.solution[0];
+        } else {
+            (question as IMultipleChoiceQuestion).options = [];
+            (question as IMultipleChoiceQuestion).solution = -1;
+        }
     } else if (to === "multiple-answer") {
-        (question as IMultipleAnswerQuestion).options = [];
-        (question as IMultipleAnswerQuestion).solution = [];
+        if (currentType === "multiple-choice") {
+            (question as any as IMultipleAnswerQuestion).solution = [
+                question.solution
+            ];
+        } else {
+            (question as IMultipleAnswerQuestion).options = [];
+            (question as IMultipleAnswerQuestion).solution = [];
+        }
     } else if (to === "ordering") {
         question.solution = [];
     } else if (to === "fill-in-the-blank") {
@@ -85,8 +96,14 @@ const toggleCollapse = (questionId: string) => {
         <ShareModal ref="shareModal" />
         <div class="wrap">
             <div class="editor">
-                <div class="meta" v-if="course">
-                    <EditableText v-model="course.title" class="h1">
+                <div
+                    class="meta"
+                    v-if="course"
+                >
+                    <EditableText
+                        v-model="course.title"
+                        class="h1"
+                    >
                         <h1>{{ course.title }}</h1>
                     </EditableText>
                     <EditableText v-model="course.description">
@@ -94,58 +111,108 @@ const toggleCollapse = (questionId: string) => {
                     </EditableText>
                     <div class="card">
                         <h3>Progress</h3>
-                        <IconButton icon="replay" label="Reset" @click="store.resetProgress(course)" />
+                        <IconButton
+                            icon="replay"
+                            label="Reset"
+                            @click="store.resetProgress(course)"
+                        />
                         <div class="progress">
                             <div class="bar">
-                                <progress :value="store.progress(course)" max="100" />
+                                <progress
+                                    :value="store.progress(course)"
+                                    max="100"
+                                />
                             </div>
-                            <span class="muted">{{ store.progress(course) }}%</span>
+                            <span class="muted"
+                                >{{ store.progress(course) }}%</span
+                            >
                         </div>
                     </div>
                     <div class="actions">
-                        <IconButton v-if="course.remote?.length" icon="file_download" label="Pull"
-                            @click="store.pull({ course })" />
-                        <IconButton icon="file_upload" label="Share" @click="
-                            ($refs.shareModal as typeof ShareModal).open(
-                                course
-                            )
-                            " />
-                        <IconButton icon="school" label="Start" type="action-green"
-                            @click="router.push(`/quiz/${course.id}`)" />
-                        <IconButton icon="delete" label="Delete" type="action-red" @click="
-                            store.removeCourse(course.id) &&
-                            router.push('/courses')
-                            " />
+                        <IconButton
+                            v-if="course.remote?.length"
+                            icon="file_download"
+                            label="Pull"
+                            @click="store.pull({ course })"
+                        />
+                        <IconButton
+                            icon="file_upload"
+                            label="Share"
+                            @click="
+                                ($refs.shareModal as typeof ShareModal).open(
+                                    course
+                                )
+                            "
+                        />
+                        <IconButton
+                            icon="school"
+                            label="Start"
+                            type="action-green"
+                            @click="router.push(`/quiz/${course.id}`)"
+                        />
+                        <IconButton
+                            icon="delete"
+                            label="Delete"
+                            type="action-red"
+                            @click="
+                                store.removeCourse(course.id) &&
+                                    router.push('/courses')
+                            "
+                        />
                     </div>
                 </div>
-                <div class="questions" v-if="course">
-                    <div v-for="(question, index) in course.questions" class="question-wrapper">
+                <div
+                    class="questions"
+                    v-if="course"
+                >
+                    <div
+                        v-for="(question, index) in course.questions"
+                        class="question-wrapper"
+                    >
                         <div class="header">
                             <div class="left">
-                                <IconButton icon="arrow_upward" @click="
-                                    store.moveQuestionUp(course, question)
-                                    " />
+                                <IconButton
+                                    icon="arrow_upward"
+                                    @click="
+                                        store.moveQuestionUp(course, question)
+                                    "
+                                />
                                 <span class="muted">
                                     {{ index + 1 }} /
                                     {{ course.questions.length }}
                                 </span>
-                                <IconButton icon="arrow_downward" @click="
-                                    store.moveQuestionDown(course, question)
-                                    " />
+                                <IconButton
+                                    icon="arrow_downward"
+                                    @click="
+                                        store.moveQuestionDown(course, question)
+                                    "
+                                />
                             </div>
                             <div class="middle">
-                                <Dropdown :options="TYPE_OPTIONS" v-model="question.type" :onChange="(to) => changeQuestionType(question, to)
-                                    " label="type" />
-                                <IconButton icon="delete" type="action-red" @click="
-                                    course.questions.splice(
-                                        course.questions.indexOf(question),
-                                        1
-                                    )
-                                    " />
+                                <Dropdown
+                                    :options="TYPE_OPTIONS"
+                                    v-model="question.type"
+                                    :onChange="
+                                        (to) => changeQuestionType(question, to)
+                                    "
+                                    label="type"
+                                />
+                                <IconButton
+                                    icon="delete"
+                                    type="action-red"
+                                    @click="
+                                        course.questions.splice(
+                                            course.questions.indexOf(question),
+                                            1
+                                        )
+                                    "
+                                />
                             </div>
                             <div class="right">
-                                <span class="muted material-symbols-rounded cursor-pointer"
-                                    @click="toggleCollapse(question.id)">
+                                <span
+                                    class="muted material-symbols-rounded cursor-pointer"
+                                    @click="toggleCollapse(question.id)"
+                                >
                                     {{
                                         collapsedQuestions.includes(question.id)
                                             ? "expand_less"
@@ -154,22 +221,33 @@ const toggleCollapse = (questionId: string) => {
                                 </span>
                             </div>
                         </div>
-                        <div class="content" v-if="!collapsedQuestions.includes(question.id)">
-                            <Question :question="question" editable />
+                        <div
+                            class="content"
+                            v-if="!collapsedQuestions.includes(question.id)"
+                        >
+                            <Question
+                                :question="question"
+                                editable
+                            />
                         </div>
                     </div>
                     <div class="actions">
-                        <IconButton icon="add" label="Add" type="action-green" @click="
-                            course.questions.push({
-                                id: Math.random()
-                                    .toString(36)
-                                    .substring(2, 9),
-                                type: 'text-answer',
-                                title: '',
-                                question: '',
-                                solution: ''
-                            })
-                            " />
+                        <IconButton
+                            icon="add"
+                            label="Add"
+                            type="action-green"
+                            @click="
+                                course.questions.push({
+                                    id: Math.random()
+                                        .toString(36)
+                                        .substring(2, 9),
+                                    type: 'text-answer',
+                                    title: '',
+                                    question: '',
+                                    solution: ''
+                                })
+                            "
+                        />
                     </div>
                 </div>
             </div>

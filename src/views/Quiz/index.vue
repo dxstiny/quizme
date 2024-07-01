@@ -264,38 +264,21 @@ const showPreviousMistakes = () => {
             <div class="header">
                 <h1>{{ quiz.title }}</h1>
                 <div class="flex gap-2">
-                    <span
-                        @click="quit"
-                        class="material-symbols-rounded muted cursor-pointer"
-                        >close</span
-                    >
-                    <progress
-                        :max="quiz.questions.length"
-                        :value="currentQuestion + (checking ? 1 : 0)"
-                    />
+                    <span @click="quit" class="material-symbols-rounded muted cursor-pointer">close</span>
+                    <progress :max="quiz.questions.length" :value="currentQuestion + (checking ? 1 : 0)" />
                 </div>
             </div>
             <div class="body">
-                <div
-                    v-if="showPreviousMistakes() && !previousMistakesShown"
-                    class="correct-missed"
-                >
+                <div v-if="showPreviousMistakes() && !previousMistakesShown" class="correct-missed">
                     <h1>
                         Let's correct the exercises you got wrong last time!
                     </h1>
                 </div>
-                <Question
-                    v-else
-                    :question="quiz.questions[currentQuestion]"
-                    :disabled="checking"
-                    :show-correction="checking"
-                />
+                <Question v-else :question="quiz.questions[currentQuestion]" :disabled="checking"
+                    :show-correction="checking" />
             </div>
         </template>
-        <div
-            class="end"
-            v-else
-        >
+        <div class="end" v-else>
             <h1>Well done!</h1>
             <div class="review">
                 <div class="score">
@@ -304,7 +287,7 @@ const showPreviousMistakes = () => {
                         {{
                             Math.round(
                                 (run.correct.length / quiz.questions.length) *
-                                    100
+                                100
                             )
                         }}
                         %
@@ -317,50 +300,17 @@ const showPreviousMistakes = () => {
             </div>
         </div>
         <div class="footer">
-            <div
-                class="check"
-                v-if="showEnd()"
-            >
-                <IconButton
-                    class="left"
-                    label="Review Lesson"
-                    type="minimal-grey"
-                />
-                <IconButton
-                    class="right"
-                    label="Continue"
-                    type="submit"
-                    @click="router.push('/')"
-                />
+            <div class="check" v-if="showEnd()">
+                <IconButton class="left" label="Review Lesson" type="minimal-grey" />
+                <IconButton class="right" label="Continue" type="submit" @click="router.push('/')" />
             </div>
-            <div
-                class="check"
-                v-else-if="!checking"
-            >
-                <IconButton
-                    class="left"
-                    icon="lightbulb"
-                    label="Show Tip"
-                    type="minimal-blue"
-                    v-if="hasTip"
-                    @click="showTip"
-                />
-                <IconButton
-                    class="right"
-                    :label="checkText"
-                    type="submit"
-                    :disabled="!answered"
-                    @click="check"
-                />
+            <div class="check" v-else-if="!checking">
+                <IconButton class="left" icon="lightbulb" label="Show Tip" type="minimal-blue" v-if="hasTip"
+                    @click="showTip" />
+                <IconButton class="right" :label="checkText" type="submit" :disabled="!answered" @click="check" />
             </div>
-            <div
-                class="checking"
-                v-else
-            >
-                <div
-                    class="correct"
-                    v-if="correct()"
-                >
+            <div class="checking" v-else>
+                <div class="correct" v-if="correct()">
                     <div class="continue">
                         <div class="icon">
                             <span class="material-symbols-rounded">check</span>
@@ -370,17 +320,10 @@ const showPreviousMistakes = () => {
                         <h2>Correct!</h2>
                     </div>
                     <div class="continue">
-                        <IconButton
-                            label="Continue"
-                            type="submit"
-                            @click="next"
-                        />
+                        <IconButton label="Continue" type="submit" @click="next" />
                     </div>
                 </div>
-                <div
-                    class="wrong"
-                    v-else
-                >
+                <div class="wrong" v-else>
                     <div class="continue">
                         <div class="icon">
                             <span class="material-symbols-rounded">close</span>
@@ -393,11 +336,7 @@ const showPreviousMistakes = () => {
                         </p>
                     </div>
                     <div class="continue">
-                        <IconButton
-                            label="Continue"
-                            type="action-red"
-                            @click="next"
-                        />
+                        <IconButton label="Continue" type="action-red" @click="next" />
                     </div>
                 </div>
             </div>
@@ -413,14 +352,17 @@ float in left, stay middle, float out right in 3s
         transform: translateX(-30%);
         opacity: 0;
     }
+
     30% {
         transform: translateX(0);
         opacity: 1;
     }
+
     70% {
         transform: translateX(0);
         opacity: 1;
     }
+
     100% {
         transform: translateX(30%);
         opacity: 0;
@@ -466,7 +408,7 @@ float in left, stay middle, float out right in 3s
                 color: var(--bg-base);
             }
 
-            & > div {
+            &>div {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -521,7 +463,7 @@ float in left, stay middle, float out right in 3s
         }
     }
 
-    & > div {
+    &>div {
         padding: 0 1em;
         width: calc(100% - 2em);
 
@@ -542,7 +484,7 @@ float in left, stay middle, float out right in 3s
             padding: 0 1em;
         }
 
-        & > div {
+        &>div {
             @media screen and (min-width: 1080px) {
                 max-width: 1080px;
             }
@@ -582,6 +524,7 @@ progress {
         &.wrong {
             color: var(--fg-red);
         }
+
         &.correct {
             color: var(--fg-green);
         }
@@ -615,10 +558,12 @@ progress {
 
 .footer:has(.wrong) {
     background: var(--c-red-ltr);
+    border-top: 2px solid var(--fg-red);
 }
 
 .footer:has(.correct) {
     background: var(--c-green-ltr);
+    border-top: 2px solid var(--fg-green);
 }
 
 .footer:has(.check) {

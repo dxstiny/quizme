@@ -2,6 +2,7 @@
 import EditableText from "../EditableText.vue";
 import { type IMultipleChoiceQuestion } from "../../quiz";
 import { type PropType, ref, watch } from "vue";
+import Tag from "../Tag.vue";
 
 const props = defineProps({
     question: {
@@ -86,6 +87,11 @@ const showAsWrong = (index: number) => {
 <template>
     <div class="question multiple-choice">
         <div class="header">
+            <Tag
+                v-if="!editable"
+                label="Multiple Choice"
+                icon="rule"
+            />
             <EditableText
                 :locked="!editable"
                 v-model="question.title"

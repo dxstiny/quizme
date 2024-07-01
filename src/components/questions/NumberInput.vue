@@ -6,6 +6,7 @@ import { type PropType, ref, watch, onMounted } from "vue";
 import ExpandedDropdown from "../ExpandedDropdown.vue";
 import IconButton from "../IconButton.vue";
 import Notepad from "../Notepad.vue";
+import Tag from "../Tag.vue";
 
 const notepad = ref<typeof Notepad>();
 
@@ -124,6 +125,11 @@ const autoResize = (el: EventTarget | null) => {
 <template>
     <div class="question">
         <div class="header">
+            <Tag
+                v-if="!editable"
+                label="Number Input"
+                icon="calculate"
+            />
             <EditableText
                 :locked="!editable"
                 v-model="question.title"

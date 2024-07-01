@@ -3,6 +3,7 @@ import EditableText from "../EditableText.vue";
 import { type IOrderingQuestion } from "../../quiz";
 import { type PropType, watch, ref, onMounted } from "vue";
 import draggable from "vuedraggable";
+import Tag from "../Tag.vue";
 
 const props = defineProps({
     question: {
@@ -55,6 +56,11 @@ onMounted(randomise);
 <template>
     <div class="question multiple-choice">
         <div class="header">
+            <Tag
+                v-if="!editable"
+                label="Ordering"
+                icon="sort"
+            />
             <EditableText
                 :locked="!editable"
                 v-model="question.title"

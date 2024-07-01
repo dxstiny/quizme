@@ -3,6 +3,7 @@ import EditableText from "../EditableText.vue";
 import type { IFillInTheBlankQuestion } from "@/quiz";
 import { ref, type PropType, onMounted } from "vue";
 import IconButton from "../IconButton.vue";
+import Tag from "../Tag.vue";
 
 const props = defineProps({
     question: {
@@ -98,6 +99,11 @@ const insertGap = () => {
 <template>
     <div class="question fill-in-the-blank">
         <div class="header">
+            <Tag
+                v-if="!editable"
+                label="Fill in the Blank"
+                icon="edit"
+            />
             <EditableText
                 :locked="!editable"
                 v-model="question.title"

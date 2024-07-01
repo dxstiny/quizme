@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import EditableText from "../EditableText.vue";
 import { type IMultipleAnswerQuestion } from "../../quiz";
-import { type PropType, ref, watch } from "vue";
+import { type PropType, ref, watch, onMounted } from "vue";
+import Tag from "../Tag.vue";
 
 const props = defineProps({
     question: {
@@ -105,10 +106,19 @@ const showAsWrong = (index: number) => {
     }
     return false;
 };
+
+onMounted(() => {
+    props.question.answer = [];
+});
 </script>
 <template>
     <div class="question multiple-choice">
         <div class="header">
+            <Tag
+                v-if="!editable"
+                label="Multiple Answer"
+                icon="checklist_rtl"
+            />
             <EditableText
                 :locked="!editable"
                 v-model="question.title"
@@ -136,7 +146,7 @@ const showAsWrong = (index: number) => {
                     correct: showAsCorrect(index),
                     wrong: showAsWrong(index)
                 }"
-                tabindex=0
+                tabindex="0"
                 @click="select(index)"
                 @keypress.space.stop="select(index)"
                 v-for="(option, index) in randomOptions"
@@ -144,6 +154,7 @@ const showAsWrong = (index: number) => {
                 <EditableText
                     :locked="!editable"
                     no-outline
+                    @keypress.space.stop
                     v-model="randomOptions[index]"
                 >
                     <span>{{ option }}</span>

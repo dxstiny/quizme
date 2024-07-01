@@ -5,6 +5,7 @@ import { type ITextAnswerQuestion } from "../../quiz";
 import { type PropType, ref, watch, computed, onMounted } from "vue";
 import ExpandedDropdown from "../ExpandedDropdown.vue";
 import { checkTextAnswer } from "@/answerCorrect";
+import Tag from "../Tag.vue";
 
 const props = defineProps({
     question: {
@@ -156,6 +157,11 @@ const tryoutCorrect = computed(() => {
 <template>
     <div class="question multiple-choice">
         <div class="header">
+            <Tag
+                v-if="!editable"
+                label="Text Input"
+                icon="edit_note"
+            />
             <EditableText
                 :locked="!editable"
                 v-model="question.title"

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import EditableText from "../EditableText.vue";
 import { type ITrueFalseQuestion } from "../../quiz";
-import { type PropType, ref, watch } from "vue";
+import { onMounted, type PropType } from "vue";
+import Tag from "../Tag.vue";
 
 const props = defineProps({
     question: {
@@ -25,10 +26,19 @@ const select = (value: boolean) => {
     }
     props.question.answer = value;
 };
+
+onMounted(() => {
+    props.question.answer = undefined;
+});
 </script>
 <template>
     <div class="question multiple-choice">
         <div class="header">
+            <Tag
+                v-if="!editable"
+                label="True or False"
+                icon="check"
+            />
             <EditableText
                 v-model="question.title"
                 class="h1"
