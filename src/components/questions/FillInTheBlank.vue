@@ -88,7 +88,6 @@ const onFocusOut = () => {
     generateQuiz(editor.value.innerHTML);
     props.question.text = editor.value.innerHTML;
     props.question.solution = allGaps.value;
-    console.log(props.question);
 };
 
 const insertGap = () => {

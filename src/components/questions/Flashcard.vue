@@ -31,7 +31,6 @@ watch(
 const placeholder = computed(() => {
     // replace all characters with m with a regex
     const placeholder = props.question.solution.replace(/\w/g, "c");
-    console.log(placeholder);
     return placeholder;
 });
 </script>

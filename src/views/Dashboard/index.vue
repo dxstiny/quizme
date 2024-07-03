@@ -4,6 +4,7 @@ import WithSidebar from "../WithSidebar.vue";
 import { useStatsStore } from "@/stores/stats";
 import { useSettingsStore } from "@/stores/settings";
 import { useCourseStore } from "@/stores/course";
+import Rive from "@/components/Rive.vue";
 
 const statStore = useStatsStore();
 const settingStore = useSettingsStore();
@@ -36,6 +37,14 @@ const quests = computed(() => {
         }
     ];
 });
+
+const averageQuestProgress = computed(
+    () =>
+        quests.value.reduce(
+            (acc, quest) => acc + quest.progress / quest.max,
+            0
+        ) / quests.value.length
+);
 </script>
 <template>
     <WithSidebar>
@@ -63,6 +72,14 @@ const quests = computed(() => {
                     </div>
                 </div>
                 <div class="other">
+                    <div class="raccoon">
+                        <Rive
+                            src="/quizme/assets/raccoon.riv"
+                            autoplay
+                            state-machine="default"
+                            :inputs="{ happiness: 100 * averageQuestProgress }"
+                        />
+                    </div>
                     <div
                         class="card"
                         v-if="goals.length"
@@ -111,6 +128,16 @@ const quests = computed(() => {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.raccoon {
+    display: flex;
+    justify-content: center;
+    margin: 1em;
+
+    > div {
+        max-width: 200px;
+    }
 }
 
 .dashboard {
