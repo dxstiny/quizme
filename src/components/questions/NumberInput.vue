@@ -161,22 +161,24 @@ const autoResize = (el: EventTarget | null) => {
                     placeholder="Enter your answer here"
                 />
             </div>
-            <hr />
-            <div class="line notepad">
-                <textarea
-                    v-if="question.allowNotes"
-                    class="notes"
-                    placeholder="Notes"
-                    @keypress.enter="calculate"
-                    @input="autoResize($event.target)"
-                    v-model="notes"
-                />
-                <span v-if="question.allowCalculator">
-                    <span class="material-symbols-rounded"> info </span>
-                    Calculator enabled. Terminate your calculation with an = and
-                    press enter.
-                </span>
-            </div>
+            <template v-if="question.allowNotes || question.allowCalculator">
+                <hr />
+                <div class="line notepad">
+                    <textarea
+                        v-if="question.allowNotes"
+                        class="notes"
+                        placeholder="Notes"
+                        @keypress.enter="calculate"
+                        @input="autoResize($event.target)"
+                        v-model="notes"
+                    />
+                    <span v-if="question.allowCalculator">
+                        <span class="material-symbols-rounded"> info </span>
+                        Calculator enabled. Terminate your calculation with an =
+                        and press enter.
+                    </span>
+                </div>
+            </template>
         </div>
         <template v-else>
             <div class="settings">

@@ -62,19 +62,22 @@ export const generateQuiz = (
     length = length || useSettingsStore().settings.defaultLength;
 
     console.log("Generating quiz", course, length);
+    for (const question of course.questions) {
+        delete question.answer;
+    }
 
     const quiz = JSON.parse(JSON.stringify(course)) as IQuiz;
-    let questions = course.questions;
+    let questions = quiz.questions;
 
     if (length == -2) {
         // filter out mastered questions
         questions = questions.filter((q) => (course.score?.[q.id] ?? 0) < 2);
         if (!questions.length) {
-            questions = course.questions;
+            questions = quiz.questions;
         }
     }
 
-    let weightedQuestions = weightQuestions(course, questions);
+    let weightedQuestions = weightQuestions(quiz, questions);
     quiz.questions = [];
 
     for (

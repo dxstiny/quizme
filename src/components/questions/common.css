@@ -3,7 +3,7 @@
     flex-direction: column;
     align-items: center;
     overflow: auto;
-    padding-bottom: 1em;
+    padding: 1em 0;
 }
 
 .question > div {
