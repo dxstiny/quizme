@@ -145,6 +145,11 @@ const toggleCollapse = (questionId: string) => {
                             "
                         />
                         <IconButton
+                            icon="code"
+                            label="Edit in JSON"
+                            @click="router.push(`${route.path}/json`)"
+                        />
+                        <IconButton
                             icon="school"
                             label="Start"
                             type="action-green"

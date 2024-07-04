@@ -29,6 +29,11 @@ const router = createRouter({
             component: () => import("../views/Editor/index.vue")
         },
         {
+            path: "/courses/:id/json",
+            name: "edit-course-json",
+            component: () => import("../views/Editor/JsonEditor.vue")
+        },
+        {
             path: "/about",
             name: "about",
             component: () => import("../views/About/index.vue")

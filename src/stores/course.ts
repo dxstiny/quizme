@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import { generateQuiz, type ICourse, type IRemote } from "@/course";
 import type { Question } from "@/quiz";
 import gistClient from "@/helper/gistClient";
-import { pull, push } from "@/helper/share";
+import { pull, push } from "@/helper/share/index";
 
 const STORAGE_KEY = "quizme.courses";
 

@@ -7,6 +7,11 @@ import type { ICourse } from "@/course";
 import { fromShare } from "./share";
 
 type Files = Record<string, object>;
+interface IOptions {
+    filename?: string;
+    description?: string;
+    isPublic?: boolean;
+}
 
 const pat = () => localStorage.getItem("github.pat");
 const me = () => JSON.parse(localStorage.getItem("github.me") ?? "null");
@@ -20,17 +25,12 @@ const getHeaders = async (forcePat: string | null = null) => {
     };
 };
 
-const body = (
-    files: Files,
-    filename: string = "QuizMe",
-    description: string = "Shared with QuizMe",
-    isPublic: boolean = false
-) => {
+const body = (files: Files, options: IOptions) => {
     const body = {
-        public: isPublic,
-        description: description,
+        public: options.isPublic ?? false,
+        description: options.description,
         files: {
-            [`_${filename}.md`]: {
+            [`_${options.filename ?? "QuizMe"}.md`]: {
                 content:
                     "# QuizMe\n\nThis gist was created with QuizMe\n\nhttps://dxstiny.github.io/quizme/"
             }
@@ -46,15 +46,35 @@ const body = (
 
 const save = async (
     files: Files,
-    filename: string,
-    description: string,
-    isPublic: boolean = false
+    options: IOptions = {
+        isPublic: false
+    }
 ) => {
+    return await setGist(files, options);
+};
+
+const update = async (
+    files: Files,
+    options: IOptions = {
+        isPublic: false
+    },
+    id: string
+) => {
+    return await setGist(files, options, id);
+};
+
+const setGist = async (files: Files, options: IOptions, id?: string) => {
     const headers = await getHeaders();
-    const res = await fetch("https://api.github.com/gists", {
-        method: "POST",
+
+    let endpoint = "https://api.github.com/gists";
+    if (id) {
+        endpoint += "/" + id;
+    }
+
+    const res = await fetch(endpoint, {
+        method: id ? "PATCH" : "POST",
         headers,
-        body: body(files, filename, description, isPublic)
+        body: body(files, options)
     });
 
     if (!res.ok) {
@@ -81,6 +101,7 @@ const fetchMe = () => {
 
     return null;
 };
+fetchMe();
 
 const isMine = (identifier: string) => {
     const myData = fetchMe();
@@ -93,50 +114,14 @@ const isMine = (identifier: string) => {
     return myName === author;
 };
 
-const update = async (course: ICourse, identifier: string) => {
-    const { tag } = fromShare(identifier);
-
-    const [id] = tag.split(":");
-
-    const name = `${course.title}.qm`;
-    const files = { [name]: course };
-
-    const headers = await getHeaders();
-    const res = await fetch(`https://api.github.com/gists/${id}`, {
-        method: "PATCH",
-        headers,
-        body: body(files, course.title, course.description, false)
-    });
-
-    if (!res.ok) {
-        return null;
-    }
-
-    const jdata = await res.json();
-    return jdata;
-};
-
 export default {
     pat,
     setPat(pat: string) {
         localStorage.setItem("github.pat", pat);
         fetchMe();
     },
-    save,
-    search: async (forcePat: string | null = null) => {
-        // searches for gists with the filename "one.lib.json"
-        const headers = await getHeaders(forcePat);
-        const res = await fetch(`https://api.github.com/gists`, {
-            headers
-        });
-        const data = await res.json();
-
-        // search for file "my.one.collection"
-        const filename = "my.one.collection";
-        const gist = data?.find((gist: any) => gist.files?.[filename]);
-        return gist?.id;
-    },
     me: fetchMe,
+    save,
     isMine,
     update
 };

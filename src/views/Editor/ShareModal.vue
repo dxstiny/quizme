@@ -45,19 +45,20 @@ const save = async () => {
     if (!course) return;
 
     const courseCopy: ICourse = JSON.parse(JSON.stringify(course));
+    delete courseCopy.remote;
 
     if (!includeProgress.value) {
         courseCopy.score = {};
-        delete courseCopy.remote;
     }
 
-    shareUrl.value = await courses.shareCourse(courseCopy, publicGist.value) ?? "";
+    shareUrl.value =
+        (await courses.shareCourse(courseCopy, publicGist.value)) ?? "";
 };
 
 const download = () => {
     courses.downloadCourse(sharingCourse.value!);
     dialog.value?.close();
-}
+};
 
 const update = () => {
     const course = sharingCourse.value;
@@ -67,10 +68,9 @@ const update = () => {
 
     if (!includeProgress.value) {
         courseCopy.score = {};
-        delete courseCopy.remote;
     }
 
-    gistClient.update(courseCopy, course.remote![0].identifier);
+    courses.shareCourse(courseCopy, publicGist.value);
 
     dialog.value?.close();
 };
@@ -87,13 +87,19 @@ defineExpose({ open });
 </script>
 <template>
     <dialog ref="dialog">
-        <span class="material-symbols-rounded close" @click="dialog?.close()">
+        <span
+            class="material-symbols-rounded close"
+            @click="dialog?.close()"
+        >
             close
         </span>
         <template v-if="!action && sharingCourse">
             <h1>Share "{{ sharingCourse.title }}"</h1>
             <div class="options">
-                <div class="option" v-if="canUpdate">
+                <div
+                    class="option"
+                    v-if="canUpdate"
+                >
                     <div class="info">
                         <h3>Update remote</h3>
                         <p>
@@ -101,17 +107,27 @@ defineExpose({ open });
                             share the latest changes.
                         </p>
                     </div>
-                    <IconButton type="action-green" icon="update" label="Update" @click="update" />
+                    <IconButton
+                        type="action-green"
+                        icon="update"
+                        label="Update"
+                        @click="update"
+                    />
                 </div>
                 <div class="option">
                     <div class="info">
                         <h3>New share</h3>
                         <p>
-                            Share this course for the first time. This will create
-                            a new gist on GitHub.
+                            Share this course for the first time. This will
+                            create a new gist on GitHub.
                         </p>
                     </div>
-                    <IconButton type="action-green" icon="share" label="Share" @click="action = 'gist'" />
+                    <IconButton
+                        type="action-green"
+                        icon="share"
+                        label="Share"
+                        @click="action = 'gist'"
+                    />
                 </div>
                 <div class="option">
                     <div class="info">
@@ -121,7 +137,12 @@ defineExpose({ open });
                             to import the course on another device.
                         </p>
                     </div>
-                    <IconButton type="action-green" icon="download" label="Download" @click="download" />
+                    <IconButton
+                        type="action-green"
+                        icon="download"
+                        label="Download"
+                        @click="download"
+                    />
                 </div>
             </div>
         </template>
@@ -131,14 +152,28 @@ defineExpose({ open });
                 To use this feature, you need to provide a GitHub Gists PAT.
                 This is used to create gists for sharing courses.
             </p>
-            <input type="text" v-model="inputPat" placeholder="Enter your PAT here" />
-            <IconButton type="action-green" icon="done" label="Save" :disabled="!inputPat.length" @click="setPat" />
+            <input
+                type="text"
+                v-model="inputPat"
+                placeholder="Enter your PAT here"
+            />
+            <IconButton
+                type="action-green"
+                icon="done"
+                label="Save"
+                :disabled="!inputPat.length"
+                @click="setPat"
+            />
         </template>
         <template v-else-if="action == 'gist' && sharingCourse">
             <h1>Share "{{ sharingCourse.title }}"</h1>
             <div v-if="shareUrl">
                 <p>Your share link:</p>
-                <input type="text" readonly :value="shareUrl" />
+                <input
+                    type="text"
+                    readonly
+                    :value="shareUrl"
+                />
             </div>
             <div v-else>
                 <p>
@@ -146,10 +181,21 @@ defineExpose({ open });
                     create a gist on GitHub with the course data.
                 </p>
                 <div class="options">
-                    <Switch label="Include Progress" v-model="includeProgress" />
-                    <Switch label="Public Gist" v-model="publicGist" />
+                    <Switch
+                        label="Include Progress"
+                        v-model="includeProgress"
+                    />
+                    <Switch
+                        label="Public Gist"
+                        v-model="publicGist"
+                    />
                 </div>
-                <IconButton type="action-green" icon="share" label="Share" @click="save" />
+                <IconButton
+                    type="action-green"
+                    icon="share"
+                    label="Share"
+                    @click="save"
+                />
             </div>
         </template>
     </dialog>
@@ -168,7 +214,7 @@ dialog[open] {
 }
 
 dialog[open],
-dialog[open]>div {
+dialog[open] > div {
     outline: none;
     display: flex;
     flex-direction: column;
