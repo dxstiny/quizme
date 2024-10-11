@@ -44,7 +44,7 @@ onUnmounted(() => {
 });
 
 const updateEditor = (value: string) => {
-    if (editor) {
+    if (editor && editor.getValue() != value) {
         editor.setValue(value);
     }
 };
@@ -54,10 +54,7 @@ watch(() => props.modelValue, updateEditor);
 </script>
 
 <template>
-    <div
-        ref="container"
-        style="height: 100%"
-    ></div>
+    <div ref="container" style="height: 100%"></div>
 </template>
 
 <style scoped>
