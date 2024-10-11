@@ -18,6 +18,7 @@ import ShareModal from "./ShareModal.vue";
 const route = useRoute();
 const router = useRouter();
 const store = useCourseStore();
+const shareModal = ref<typeof ShareModal>()
 
 const id = route.params.id;
 const course = store.courses.find((course) => course.id === id);
@@ -117,7 +118,7 @@ const toggleCollapse = (questionId: string) => {
                         <IconButton v-if="course.remote?.length" icon="file_download" label="Pull"
                             @click="store.pull({ course })" />
                         <IconButton icon="file_upload" label="Share" @click="
-                            ($refs.shareModal as typeof ShareModal).open(
+                            shareModal?.open(
                                 course
                             )
                             " />

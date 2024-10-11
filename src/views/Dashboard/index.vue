@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useRouter } from "vue-router";
 import WithSidebar from "../WithSidebar.vue";
 import { useStatsStore } from "@/stores/stats";
 import { useSettingsStore } from "@/stores/settings";
@@ -9,6 +10,7 @@ import Rive from "@/components/Rive.vue";
 const statStore = useStatsStore();
 const settingStore = useSettingsStore();
 const courseStore = useCourseStore();
+const router = useRouter();
 
 const goals = computed(() => []);
 
@@ -57,7 +59,7 @@ const averageQuestProgress = computed(
                             You don't have any courses yet.
                         </div>
                         <div class="course card" v-for="course in courseStore.courses"
-                            @click="$router.push(`/quiz/${course.id}`)">
+                            @click="router.push(`/quiz/${course.id}`)">
                             <h2>{{ course.title }}</h2>
                             <div class="progress">
                                 <progress :value="courseStore.progress(course)" :max="100" />

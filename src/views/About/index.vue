@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import IconButton from "@/components/IconButton.vue";
 import WithSidebar from "../WithSidebar.vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 </script>
 <template>
     <WithSidebar>
@@ -12,13 +15,8 @@ import WithSidebar from "../WithSidebar.vue";
                             school
                         </span>
                         <h1>A free, fun way to learn anything!</h1>
-                        <IconButton
-                            class="button"
-                            label="Get Started"
-                            icon="school"
-                            type="action-green"
-                            @click="$router.push('/courses')"
-                        />
+                        <IconButton class="button" label="Get Started" icon="school" type="action-green"
+                            @click="router.push('/courses')" />
                     </div>
                 </div>
                 <div class="slide double space-evenly">
