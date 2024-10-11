@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { RouterLink } from "vue-router";
+
 defineProps({
     icon: {
         type: String,
@@ -15,17 +17,14 @@ defineProps({
 });
 </script>
 <template>
-    <RouterLink
-        :to="to"
-        class="link"
-    >
+    <component :is="to ? RouterLink : 'div'" :to="to" class="link">
         <div class="entry">
             <span class="material-symbols-rounded">{{ icon }}</span>
             <span class="label">
                 {{ label }}
             </span>
         </div>
-    </RouterLink>
+    </component>
 </template>
 <style scoped>
 .link {
@@ -34,6 +33,7 @@ defineProps({
     color: var(--fg-base);
     width: 100%;
     container-type: inline-size;
+    cursor: pointer;
 
     .entry {
         border: 2px solid transparent;

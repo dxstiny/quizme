@@ -53,17 +53,14 @@ const averageQuestProgress = computed(
                 <div class="current-courses">
                     <h1>Dashboard</h1>
                     <div class="courses">
-                        <div
-                            class="course card"
-                            v-for="course in courseStore.courses"
-                            @click="$router.push(`/quiz/${course.id}`)"
-                        >
+                        <div v-if="!courseStore.courses.length" class="text">
+                            You don't have any courses yet.
+                        </div>
+                        <div class="course card" v-for="course in courseStore.courses"
+                            @click="$router.push(`/quiz/${course.id}`)">
                             <h2>{{ course.title }}</h2>
                             <div class="progress">
-                                <progress
-                                    :value="courseStore.progress(course)"
-                                    :max="100"
-                                />
+                                <progress :value="courseStore.progress(course)" :max="100" />
                                 <span>
                                     {{ courseStore.progress(course) }}%
                                 </span>
@@ -73,26 +70,16 @@ const averageQuestProgress = computed(
                 </div>
                 <div class="other">
                     <div class="raccoon">
-                        <Rive
-                            src="/quizme/assets/raccoon.riv"
-                            autoplay
-                            state-machine="default"
-                            :inputs="{ happiness: 100 * averageQuestProgress }"
-                        />
+                        <Rive src="/quizme/assets/raccoon.riv" autoplay state-machine="default"
+                            :inputs="{ happiness: 100 * averageQuestProgress }" />
                     </div>
-                    <div
-                        class="card"
-                        v-if="goals.length"
-                    >
+                    <div class="card" v-if="goals.length">
                         <h2>Goals</h2>
                     </div>
                     <div class="card">
                         <h2>Daily Quests</h2>
                         <div class="quests">
-                            <div
-                                class="quest"
-                                v-for="quest in quests"
-                            >
+                            <div class="quest" v-for="quest in quests">
                                 <div class="icon">
                                     <span class="material-symbols-rounded">
                                         {{ quest.icon }}
@@ -101,10 +88,7 @@ const averageQuestProgress = computed(
                                 <div class="info">
                                     <h3>{{ quest.title }}</h3>
                                     <div class="progress">
-                                        <progress
-                                            :value="quest.progress"
-                                            :max="quest.max"
-                                        />
+                                        <progress :value="quest.progress" :max="quest.max" />
                                         <span>
                                             {{ Math.round(quest.progress) }} /
                                             {{ quest.max }}
@@ -135,7 +119,7 @@ const averageQuestProgress = computed(
     justify-content: center;
     margin: 1em;
 
-    > div {
+    >div {
         max-width: 200px;
     }
 }
@@ -179,7 +163,7 @@ const averageQuestProgress = computed(
     border-radius: 1em;
     border: 2px solid var(--bg-base-lt);
 
-    > * {
+    >* {
         margin: 1em;
     }
 
