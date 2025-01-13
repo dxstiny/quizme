@@ -23,7 +23,11 @@ h3 {
 }
 
 .material-symbols-outlined {
-    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
+    font-variation-settings:
+        "FILL" 0,
+        "wght" 400,
+        "GRAD" 0,
+        "opsz" 48;
 }
 
 .flex {
@@ -78,4 +82,10 @@ hr {
     border-top: 2px solid var(--bg-base-lt);
     width: calc(100% - 2em);
     margin: 1em;
+}
+
+details summary {
+    cursor: pointer;
+    color: var(--fg-base-mute);
+    margin: 0.5em 0;
 }
