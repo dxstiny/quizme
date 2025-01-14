@@ -8,6 +8,8 @@ export const generateMarkdownSummary = (course: ICourse) => {
         insertHeading: (title) => `## ${title}\n`,
         insertDescription: (description) => `${description}\n`,
         insertList: (items) => items.map((i) => `- ${i}`).join("\n") + "\n",
+        insertOrderedList: (items) =>
+            items.map((i, index) => `${index + 1}. ${i}`).join("\n") + "\n",
         insertMap: (items) =>
             Object.entries(items)
                 .map(([key, value]) => `- ${key} -> ${value}`)
@@ -35,8 +37,8 @@ export const generateLatexSummary = (course: ICourse) => {
 \\maketitle
 `;
 
-    const escapeText = (text: string) =>
-        text
+    const escapeText = (text: string) => {
+        text = text
             .replace(/\\/g, "\\textbackslash{}")
             .replace(/\{/g, "\\{")
             .replace(/\}/g, "\\}")
@@ -45,6 +47,8 @@ export const generateLatexSummary = (course: ICourse) => {
             .replace(/\$/g, "\\$")
             .replace(/#/g, "\\#")
             .replace(/"([^"]*)"/g, "\\enquote{$1}");
+        return itemiseAllLists(text);
+    };
 
     text += generateSummary(course, {
         insertHeading: (title) => `\\section{${escapeText(title)}}\n`,
@@ -52,6 +56,10 @@ export const generateLatexSummary = (course: ICourse) => {
         insertList: (items) => `\\begin{itemize}
 ${items.map((i) => `\\item ${escapeText(i)}`).join("\n")}
 \\end{itemize}
+`,
+        insertOrderedList: (items) => `\\begin{enumerate}
+${items.map((i) => `\\item ${escapeText(i)}`).join("\n")}
+\\end{enumerate}
 `,
         insertMap: (items) => `\\begin{itemize}
 ${Object.entries(items)
@@ -69,7 +77,7 @@ ${Object.entries(items)
 \\end{document}
 `;
 
-    return itemiseAllLists(text);
+    return text;
 };
 
 const generateSummary = (
@@ -78,6 +86,7 @@ const generateSummary = (
         insertHeading: (title: string) => string;
         insertDescription: (description: string) => string;
         insertList: (items: string[]) => string;
+        insertOrderedList: (items: string[]) => string;
         insertMap: (items: Record<string, string>) => string;
         insertText: (text: string) => string;
     }
@@ -104,7 +113,7 @@ const generateSummary = (
                 );
                 break;
             case "ordering":
-                out += generators.insertList(question.solution);
+                out += generators.insertOrderedList(question.solution);
                 break;
             case "true-false":
                 break;
