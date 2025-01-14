@@ -1,1 +1,0 @@
-import{d as t,e as r,h as n}from"./index-jyZd5ga3.js";const a=t({__name:"Redirect",setup(u){const s=n(),e=r();if(console.log(e.courses.length),e.courses.length===0)s.push("/");else{const o=e.courses[Math.floor(Math.random()*e.courses.length)].id;s.push(`/quiz/${o}`)}return()=>{}}});export{a as default};
