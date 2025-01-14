@@ -9,7 +9,8 @@ import {
     TYPE_OPTIONS,
     type Question as IQuestion,
     type IMultipleChoiceQuestion,
-    type IMultipleAnswerQuestion
+    type IMultipleAnswerQuestion,
+    type IFillInTheBlankQuestion
 } from "@/quiz";
 import WithSidebar from "../WithSidebar.vue";
 import { ref } from "vue";
@@ -71,9 +72,10 @@ const changeQuestionType = (question: IQuestion, to: string) => {
     } else if (to === "ordering") {
         question.solution = [];
     } else if (to === "fill-in-the-blank") {
-        question.solution = [];
+        (question as IFillInTheBlankQuestion).text = "Hello, -[world]-!";
+        question.solution = ["world"];
     } else if (to === "matching") {
-        question.solution = {};
+        question.solution = [];
     } else {
         question.solution = "";
     }

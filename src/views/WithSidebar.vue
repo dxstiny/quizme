@@ -24,21 +24,47 @@ const toggleExpanded = () => {
     expanded.value = !expanded.value;
     window.localStorage.setItem(KEY, expanded.value.toString());
     setSidebarWidth();
-    console.log("sidebar width", expanded.value)
 };
 </script>
 <template>
     <div class="wrapper">
-        <div class="sidebar" :class="{ expanded }">
+        <div
+            class="sidebar"
+            :class="{ expanded }"
+        >
             <h1 class="logo">Qz</h1>
-            <NavLink to="/" icon="home" label="Home" />
-            <NavLink to="/quiz" icon="school" label="Quiz Me" />
-            <NavLink to="/courses" icon="edit" label="Courses" />
-            <NavLink to="/about" icon="question_mark" label="About" />
+            <NavLink
+                to="/"
+                icon="home"
+                label="Home"
+            />
+            <NavLink
+                to="/quiz"
+                icon="school"
+                label="Quiz Me"
+            />
+            <NavLink
+                to="/courses"
+                icon="edit"
+                label="Courses"
+            />
+            <NavLink
+                to="/about"
+                icon="question_mark"
+                label="About"
+            />
             <div class="spacer" />
-            <NavLink to="" @click="toggleExpanded" :icon="expanded ? 'chevron_left' : 'chevron_right'"
-                label="Hide Sidebar" />
-            <NavLink to="/settings" icon="settings" label="Settings" />
+            <NavLink
+                to=""
+                @click="toggleExpanded"
+                :icon="expanded ? 'chevron_left' : 'chevron_right'"
+                label="Hide Sidebar"
+            />
+            <NavLink
+                to="/settings"
+                icon="settings"
+                label="Settings"
+            />
         </div>
         <div class="slot">
             <slot />

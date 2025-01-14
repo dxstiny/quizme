@@ -11,9 +11,8 @@ export const generateMarkdownSummary = (course: ICourse) => {
         insertOrderedList: (items) =>
             items.map((i, index) => `${index + 1}. ${i}`).join("\n") + "\n",
         insertMap: (items) =>
-            Object.entries(items)
-                .map(([key, value]) => `- ${key} -> ${value}`)
-                .join("\n") + "\n",
+            items.map(([key, value]) => `- ${key} -> ${value}`).join("\n") +
+            "\n",
         insertText: (text) => `${text}\n`
     });
 
@@ -62,7 +61,7 @@ ${items.map((i) => `\\item ${escapeText(i)}`).join("\n")}
 \\end{enumerate}
 `,
         insertMap: (items) => `\\begin{itemize}
-${Object.entries(items)
+${items
     .map(
         ([key, value]) =>
             `\\item ${escapeText(key)} \\textrightarrow ${escapeText(value)}`
@@ -87,7 +86,7 @@ const generateSummary = (
         insertDescription: (description: string) => string;
         insertList: (items: string[]) => string;
         insertOrderedList: (items: string[]) => string;
-        insertMap: (items: Record<string, string>) => string;
+        insertMap: (items: string[][]) => string;
         insertText: (text: string) => string;
     }
 ) => {
@@ -153,7 +152,6 @@ const itemiseAllLists = (content: string) => {
                 listLevel++;
             }
             trimmedLine = trimmedLine.replace(/\\item [-*]/, "-").trim();
-            console.log(trimmedLine);
         }
 
         if (trimmedLine.startsWith("-") || trimmedLine.startsWith("*")) {

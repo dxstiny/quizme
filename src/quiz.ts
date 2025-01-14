@@ -1,3 +1,37 @@
+const convertFromLegacyMatching = (
+    question: ILegacyMatchingQuestion
+): IMatchingQuestion => {
+    const solution = Object.entries(question.solution).map(([key, value]) => [
+        key,
+        value
+    ]);
+
+    return {
+        ...question,
+        type: "matching",
+        solution,
+        answer: undefined
+    };
+};
+
+export const upgradeQuiz = (quiz: IQuiz): IQuiz => {
+    return {
+        ...quiz,
+        questions: quiz.questions.map((question) => {
+            if (
+                question.type === "matching" &&
+                !Array.isArray(question.solution as unknown)
+            ) {
+                return convertFromLegacyMatching(
+                    question as unknown as ILegacyMatchingQuestion
+                );
+            }
+
+            return question;
+        })
+    };
+};
+
 interface IQuestion {
     id: string;
     title: string;
@@ -19,14 +53,16 @@ interface IQuestion {
         | boolean
         | string[]
         | number[]
-        | Record<string, string>;
+        | Record<string, string>
+        | string[][];
     answer?:
         | string
         | number
         | boolean
         | string[]
         | number[]
-        | Record<string, string>;
+        | Record<string, string>
+        | string[][];
 }
 
 export interface IMultipleChoiceQuestion extends IQuestion {
@@ -80,10 +116,16 @@ export interface IFillInTheBlankQuestion extends IQuestion {
     answer?: string[];
 }
 
-export interface IMatchingQuestion extends IQuestion {
+export interface ILegacyMatchingQuestion extends IQuestion {
     type: "matching";
     solution: Record<string, string>;
     answer?: Record<string, string>;
+}
+
+export interface IMatchingQuestion extends IQuestion {
+    type: "matching";
+    solution: string[][];
+    answer?: string[][];
 }
 
 export interface IOrderingQuestion extends IQuestion {

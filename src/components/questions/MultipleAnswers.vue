@@ -170,7 +170,9 @@ onMounted(() => {
             <div
                 v-if="editable"
                 class="option add"
+                tabindex="0"
                 @click.stop="props.question.options.push('Option')"
+                @keypress.enter="props.question.options.push('Option')"
             >
                 <span class="material-symbols-rounded add"> add </span>
                 Add

@@ -1,15 +1,22 @@
 import { ref, watch } from "vue";
 import { defineStore } from "pinia";
 import { generateQuiz, type ICourse, type IRemote } from "@/course";
-import type { Question } from "@/quiz";
-import gistClient from "@/helper/gistClient";
+import { upgradeQuiz, type Question } from "@/quiz";
 import { pull, push } from "@/helper/share/index";
 
 const STORAGE_KEY = "quizme.courses";
 
 export const useCourseStore = defineStore("course", () => {
-    const storedCourses = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    const courses = ref<ICourse[]>(storedCourses);
+    const courses = ref<ICourse[]>([]);
+
+    const loadStoredCourses = () => {
+        const rawCourses = JSON.parse(
+            localStorage.getItem(STORAGE_KEY) || "[]"
+        );
+        courses.value = rawCourses.map(upgradeQuiz);
+    };
+
+    loadStoredCourses();
 
     watch(
         courses,
@@ -101,7 +108,7 @@ export const useCourseStore = defineStore("course", () => {
 
     const addFromUpload = async () => {
         const courses = await uploadCourses();
-        courses.map((x) => addCourse(x));
+        courses.map((x) => addCourse(upgradeQuiz(x)));
     };
 
     const moveQuestionUp = (course: ICourse, question: Question) => {

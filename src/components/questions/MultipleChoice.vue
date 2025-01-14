@@ -83,6 +83,37 @@ const showAsWrong = (index: number) => {
         return true;
     }
 };
+
+const tryDelete = (index: number) => {
+    if (props.editable) {
+        //props.question.options.splice(index, 1);
+    }
+};
+
+const tryEdit = (e: KeyboardEvent) => {
+    if (!props.editable) {
+        return;
+    }
+
+    if (e.shiftKey) {
+        return;
+    }
+
+    e.preventDefault();
+
+    const element = e.target as HTMLElement;
+    const areaChild = element.querySelector("div");
+    if (areaChild) {
+        // double click
+        const event = new MouseEvent("dblclick", {
+            view: window,
+            bubbles: true,
+            cancelable: true
+        });
+        areaChild.dispatchEvent(event);
+        return;
+    }
+};
 </script>
 <template>
     <div class="question multiple-choice">
@@ -121,6 +152,8 @@ const showAsWrong = (index: number) => {
                 tabindex="0"
                 @click="select(index)"
                 @keypress.space.stop="select(index)"
+                @keypress.enter.stop="tryEdit"
+                @keydown.delete="tryDelete(index)"
                 v-for="(option, index) in randomOptions"
             >
                 <EditableText
@@ -141,7 +174,9 @@ const showAsWrong = (index: number) => {
             <div
                 v-if="editable"
                 class="option add"
+                tabindex="0"
                 @click.stop="props.question.options.push('Option')"
+                @keypress.enter="props.question.options.push('Option')"
             >
                 <span class="material-symbols-rounded add"> add </span>
                 Add

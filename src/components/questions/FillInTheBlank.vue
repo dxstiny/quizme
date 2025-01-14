@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import EditableText from "../EditableText.vue";
 import type { IFillInTheBlankQuestion } from "@/quiz";
-import { ref, type PropType, onMounted } from "vue";
+import { ref, type PropType, onMounted, watch } from "vue";
 import IconButton from "../IconButton.vue";
 import Tag from "../Tag.vue";
 
@@ -74,6 +74,20 @@ const generateQuiz = (text: string | undefined) => {
     quiz.value.innerHTML = text;
     allGaps.value = findAllGaps();
 };
+
+watch(
+    () => props.disabled,
+    () => {
+        const gapElements = quiz.value?.querySelectorAll("input") as
+            | NodeListOf<HTMLInputElement>
+            | undefined;
+        if (!gapElements) return;
+
+        gapElements.forEach((gap: HTMLInputElement) => {
+            gap.disabled = props.disabled;
+        });
+    }
+);
 
 onMounted(() => {
     if (props.editable) {

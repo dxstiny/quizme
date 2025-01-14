@@ -82,9 +82,13 @@ const answered = computed(() => {
     if (question.type === "flashcard") return true;
 
     if (question.type == "matching") {
-        const answer = question.answer || {};
-        const solution = question.solution || {};
-        return Object.keys(solution).every((s) => answer[s] === solution[s]);
+        const answer = question.answer || [];
+        const solution = question.solution || [];
+        return solution.every((sPair) =>
+            answer.some(
+                (aPair) => aPair[0] === sPair[0] && aPair[1] === sPair[1]
+            )
+        );
     }
 
     if (question.type == "fill-in-the-blank") {
@@ -125,8 +129,6 @@ const correct = () => {
     if (activeQuestion.value.type === "number-answer") {
         return checkNumber(activeQuestion.value);
     }
-
-    console.log(activeQuestion.value.answer);
 
     return activeQuestion.value.answer === solution.value;
 };

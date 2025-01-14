@@ -33,8 +33,8 @@ const wrongPairs = ref({
 });
 
 const randomise = () => {
-    const leftSide = Object.keys(props.question.solution);
-    const rightSide = Object.values(props.question.solution);
+    const leftSide = props.question.solution.map((pair) => pair?.[0]);
+    const rightSide = props.question.solution.map((pair) => pair?.[1]);
     correctPairs.value.left = [];
     correctPairs.value.right = [];
 
@@ -49,35 +49,11 @@ const randomise = () => {
 };
 randomise();
 watch(() => props.question.solution, randomise, { deep: true });
-const renameObjKey = (oldObj: any, oldKey: string, newKey: string) => {
-    const keys = Object.keys(oldObj);
-    const newObj = keys.reduce((acc: any, val) => {
-        if (val === oldKey) {
-            acc[newKey] = oldObj[oldKey];
-        } else {
-            acc[val] = oldObj[val];
-        }
-        return acc;
-    }, {});
 
-    return newObj;
-};
-
-const onOptionChange = (side: string, index: number, to: string) => {
+const onOptionChange = (side: number, index: number, to: string) => {
     if (!props.editable) return;
 
-    if (side == "left") {
-        const oldKey = randomOptions.value.left[index];
-        const newKey = to;
-        props.question.solution = renameObjKey(
-            props.question.solution,
-            oldKey,
-            newKey
-        );
-    } else {
-        const oldKey = randomOptions.value.left[index];
-        props.question.solution[oldKey] = to;
-    }
+    props.question.solution[index][side] = to;
 };
 
 const selected = ref({
@@ -114,7 +90,7 @@ const onEnter = (e: KeyboardEvent, index: number, side: "left" | "right") => {
 const select = (index: number, side: "left" | "right") => {
     if (props.disabled) return;
     if (props.editable) return;
-    if (!props.question.answer) props.question.answer = {};
+    if (!props.question.answer) props.question.answer = [];
     if (correctPairs.value[side].includes(index)) return;
 
     if (selected.value[side] === index) {
@@ -127,9 +103,10 @@ const select = (index: number, side: "left" | "right") => {
     if (selected.value.left === null || selected.value.right === null) return;
     const left = randomOptions.value.left[selected.value.left];
     const right = randomOptions.value.right[selected.value.right];
-    props.question.answer[left] = right;
 
-    if (props.question.solution[left] === right) {
+    props.question.answer.push([left, right]);
+
+    if (props.question.solution.some(([l, r]) => l === left && r === right)) {
         correctPairs.value.left.push(selected.value.left);
         correctPairs.value.right.push(selected.value.right);
     } else {
@@ -186,7 +163,7 @@ const select = (index: number, side: "left" | "right") => {
             >
                 <div
                     class="option"
-                    v-for="side in ['left', 'right']"
+                    v-for="(side, sideIndex) in ['left', 'right']"
                     tabindex="0"
                     :class="{
                         // @ts-ignore
@@ -207,7 +184,7 @@ const select = (index: number, side: "left" | "right") => {
                     <EditableText
                         :locked="!editable"
                         no-outline
-                        @change="(to) => onOptionChange(side, index, to)"
+                        @change="(to) => onOptionChange(sideIndex, index, to)"
                         v-model="
                             // @ts-ignore
                             randomOptions[side][index]
@@ -219,10 +196,9 @@ const select = (index: number, side: "left" | "right") => {
                 <span
                     v-if="editable"
                     class="material-symbols-rounded delete"
-                    tabindex="0"
-                    @click.stop="delete props.question.solution[option]"
+                    @click.stop="props.question.solution.splice(index, 1)"
                     @keypress.enter.stop="
-                        delete props.question.solution[option]
+                        props.question.solution.splice(index, 1)
                     "
                 >
                     delete
@@ -232,8 +208,8 @@ const select = (index: number, side: "left" | "right") => {
                 v-if="editable"
                 class="option add"
                 tabindex="0"
-                @click.stop="props.question.solution['A'] = 'B'"
-                @keypress.enter="props.question.solution['A'] = 'B'"
+                @click.stop="props.question.solution.push(['', ''])"
+                @keypress.enter="props.question.solution.push(['', ''])"
             >
                 <span class="material-symbols-rounded add"> add </span>
                 Add
